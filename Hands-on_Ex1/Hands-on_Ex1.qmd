@@ -167,7 +167,7 @@ ggplot(data = mpsz3414,
                  color = "black", 
                  fill = "light blue") +
   labs(title = "Are pre-school even distributed in Singapore?",
-       subtitle= "There are many planning sub-zones with a single pre-school, on the other hand, \nthere are two planning sub-zones with at least 20 pre-schools",
+       subtitle = "There are many planning sub-zones with a single pre-school, on the other hand, \nthere are two planning sub-zones with at least 20 pre-schools",
       x = "Pre-school density (per km sq)",
       y = "Frequency")
 ```
