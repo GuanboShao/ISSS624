@@ -2,8 +2,6 @@
 title: "About"
 ---
 
-About this site
+## About this site
 
-```{r}
-1 + 1
-```
+This website is intended for the presentation of ISSS614 Exercises. All contents are properties of SMU.
