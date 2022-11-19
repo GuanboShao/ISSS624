@@ -31,7 +31,7 @@ cyclingpath = st_read(dsn = "data/geospatial",
                          layer = "CyclingPath")
 ```
 
-Importing GIS data in kml format
+### Importing GIS data in kml format
 
 ```{r}
 preschool = st_read("data/geospatial/pre-schools-location-kml.kml")
@@ -45,7 +45,7 @@ preschool = st_read("data/geospatial/pre-schools-location-kml.kml")
 st_geometry(mpsz)
 ```
 
-Working with glimpse()
+### Working with *glimpse()*
 
 ```{r}
 glimpse(mpsz)
