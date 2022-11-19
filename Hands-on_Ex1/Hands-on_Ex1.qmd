@@ -13,7 +13,6 @@ The code chunk below install and load [sf](https://r-spatial.github.io/sf/) and 
 
 ```{r}
 pacman::p_load(sf, tidyverse)
-
 ```
 
 ## Importing Geospatial Data
@@ -27,8 +26,7 @@ mpsz <- st_read(dsn = "data/geospatial", layer = "MP14_SUBZONE_WEB_PL")
 ### Importing polyline feature data in shapefile form
 
 ```{r}
-cyclingpath = st_read(dsn = "data/geospatial", 
-                         layer = "CyclingPath")
+cyclingpath = st_read(dsn = "data/geospatial", layer = "CyclingPath")
 ```
 
 ### Importing GIS data in kml format
@@ -90,8 +88,7 @@ st_crs(mpsz3414)
 ### Transforming the projection of preschool from wgs84 to svy21
 
 ```{r}
-preschool3414 <- st_transform(preschool, 
-                              crs = 3414)
+preschool3414 <- st_transform(preschool, crs = 3414)
 ```
 
 ## Importing and Converting an Aspatial Data
@@ -109,9 +106,7 @@ list(listings)
 ### Creating a simple feature data frame from an aspatial data frame
 
 ```{r}
-listings_sf <- st_as_sf(listings, 
-                       coords = c("longitude", "latitude"),
-                       crs=4326) %>%
+listings_sf <- st_as_sf(listings, coords = c("longitude", "latitude"), crs=4326) %>%
   st_transform(crs = 3414)
 ```
 
@@ -124,8 +119,7 @@ glimpse(listings_sf)
 ### Buffering
 
 ```{r}
-buffer_cycling <- st_buffer(cyclingpath, 
-                               dist=5, nQuadSegs = 30)
+buffer_cycling <- st_buffer(cyclingpath, dist=5, nQuadSegs = 30)
 ```
 
 ```{r}
