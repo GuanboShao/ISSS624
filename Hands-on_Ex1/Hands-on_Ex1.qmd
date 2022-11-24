@@ -148,7 +148,7 @@ The code chunk below checks the newly created simple feature data frame.
 glimpse(listings_sf)
 ```
 
-## Geoprocessing with sf package
+## Geoprocessing with sf Package
 
 In this section, I learn to perform two geoprocessing functions, buffering and point in polygon count.
 
@@ -206,7 +206,7 @@ mpsz3414 <- mpsz3414 %>%
   mutate(`PreSch Density` = `PreSch Count`/Area * 1000000)
 ```
 
-## Explorotary Data Analysis (EDA)
+## Exploratory Data Analysis (EDA)
 
 In this section, I learn how to use [ggplot2](https://ggplot2.tidyverse.org/) functions to create graphs for EDA purposes.
 

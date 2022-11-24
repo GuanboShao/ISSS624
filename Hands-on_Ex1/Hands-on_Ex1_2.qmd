@@ -234,11 +234,11 @@ tm_shape(mpsz_pop2020) +
   tm_borders(alpha = 0.5)
 ```
 
-### Colour Scheme
+### Color Scheme
 
-#### Using ColourBrewer palette
+#### Using ColorBrewer palette
 
-The code chunk below changes colour.
+The code chunk below changes color.
 
 ```{r}
 tm_shape(mpsz_pop2020) +
@@ -246,7 +246,7 @@ tm_shape(mpsz_pop2020) +
   tm_borders(alpha = 0.5)
 ```
 
-To reverse colour shading, add "-" prefix.
+To reverse color shading, add "-" prefix.
 
 ```{r}
 tm_shape(mpsz_pop2020) +
