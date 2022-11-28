@@ -306,5 +306,54 @@
     "title": "Hands-on Exercise 2: Global and Local Measures of Spatial Autocorrelation",
     "section": "Computing Gi Statistics",
     "text": "Computing Gi Statistics\n\nGi statistics using fixed distance\nThe code chunk below computes Gi values.\n\nfips <- order(hunan$County)\ngi.fixed <- localG(hunan$GDPPC, wm62_lw)\ngi.fixed\n\n [1]  0.436075843 -0.265505650 -0.073033665  0.413017033  0.273070579\n [6] -0.377510776  2.863898821  2.794350420  5.216125401  0.228236603\n[11]  0.951035346 -0.536334231  0.176761556  1.195564020 -0.033020610\n[16]  1.378081093 -0.585756761 -0.419680565  0.258805141  0.012056111\n[21] -0.145716531 -0.027158687 -0.318615290 -0.748946051 -0.961700582\n[26] -0.796851342 -1.033949773 -0.460979158 -0.885240161 -0.266671512\n[31] -0.886168613 -0.855476971 -0.922143185 -1.162328599  0.735582222\n[36] -0.003358489 -0.967459309 -1.259299080 -1.452256513 -1.540671121\n[41] -1.395011407 -1.681505286 -1.314110709 -0.767944457 -0.192889342\n[46]  2.720804542  1.809191360 -1.218469473 -0.511984469 -0.834546363\n[51] -0.908179070 -1.541081516 -1.192199867 -1.075080164 -1.631075961\n[56] -0.743472246  0.418842387  0.832943753 -0.710289083 -0.449718820\n[61] -0.493238743 -1.083386776  0.042979051  0.008596093  0.136337469\n[66]  2.203411744  2.690329952  4.453703219 -0.340842743 -0.129318589\n[71]  0.737806634 -1.246912658  0.666667559  1.088613505 -0.985792573\n[76]  1.233609606 -0.487196415  1.626174042 -1.060416797  0.425361422\n[81] -0.837897118 -0.314565243  0.371456331  4.424392623 -0.109566928\n[86]  1.364597995 -1.029658605 -0.718000620\nattr(,\"cluster\")\n [1] Low  Low  High High High High High High High Low  Low  High Low  Low  Low \n[16] High High High High Low  High High Low  Low  High Low  Low  Low  Low  Low \n[31] Low  Low  Low  High Low  Low  Low  Low  Low  Low  High Low  Low  Low  Low \n[46] High High Low  Low  Low  Low  High Low  Low  Low  Low  Low  High Low  Low \n[61] Low  Low  Low  High High High Low  High Low  Low  High Low  High High Low \n[76] High Low  Low  Low  Low  Low  Low  High High Low  High Low  Low \nLevels: Low High\nattr(,\"gstari\")\n[1] FALSE\nattr(,\"call\")\nlocalG(x = hunan$GDPPC, listw = wm62_lw)\nattr(,\"class\")\n[1] \"localG\"\n\n\nThe code chunk below joins the Gi values to hunan sf data frame.\n\nhunan.gi <- cbind(hunan, as.matrix(gi.fixed)) %>%\n  rename(gstat_fixed = as.matrix.gi.fixed.)\n\n\n\nMapping Gi values with fixed distance weights\nThe code chunk below shows the function used to map the Gi values using fixed distance weight matrix.\n\ngdppc <- qtm(hunan, \"GDPPC\")\n\nGimap <- tm_shape(hunan.gi) +\n  tm_fill(col = \"gstat_fixed\", style = \"pretty\", palette = \"-RdBu\", title = \"local Gi\") +\n  tm_borders(alpha = 0.5)\n\ntmap_arrange(gdppc, Gimap, asp = 1, ncol = 2)\n\nVariable(s) \"gstat_fixed\" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette.\n\n\n\n\n\n\n\nGi statistics using adaptive distance\nThe code chunk below computes Gi values for GDPPC2012.\n\nfips <- order(hunan$County)\ngi.adaptive <- localG(hunan$GDPPC, knn_lw)\nhunan.gi <- cbind(hunan, as.matrix(gi.adaptive)) %>%\n  rename(gstat_adaptive = as.matrix.gi.adaptive.)\n\n\n\nMapping Gi values with adaptive distance weights\nThe code chunk below shows the function used to map the Gi values using adaptive distance weight matrix.\n\ngdppc<- qtm(hunan, \"GDPPC\")\n\nGimap <- tm_shape(hunan.gi) + \n  tm_fill(col = \"gstat_adaptive\", style = \"pretty\", palette = \"-RdBu\", title = \"local Gi\") + \n  tm_borders(alpha = 0.5)\n\ntmap_arrange(gdppc, Gimap, asp = 1, ncol = 2)\n\nVariable(s) \"gstat_adaptive\" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full spectrum of the color palette."
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html",
+    "href": "In-class_Ex2/In-class_Ex2.html",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "",
+    "text": "In this in-class exercise, I learn how to import Nigeria water point geospatial data and LGA boundary data, perform Exploratory Data Analysis, data wrangling and extracting, then save data as rds file."
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html#getting-started",
+    "href": "In-class_Ex2/In-class_Ex2.html#getting-started",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "Getting Started",
+    "text": "Getting Started\nThe code chunk below will install and load spdep, sf, tmap and tidyverse packages.\n\npacman::p_load(sf, tidyverse, tmap, spdep, funModeling)\n\n\nImporting water point geospatial data\nThe code chunk below imports water point geospatial data geo_export shapefile into R and save into simple feature data table.\n\nwp <- st_read(dsn = \"data/aspatial\",\n              layer = \"geo_export\",\n              crs = 4326) %>%\n  # st_transform(crs = 26391)\n  filter(clean_coun == \"Nigeria\")\n\nThe code chunk below save extracted sf data table into rds data format.\n\nwp_nga <- write_rds(wp, \"data/wp_nga.rds\")\n\n\n\nImporting Nigeria LGA boundary data\n\nnga <- st_read(dsn = \"data/geospatial\",\n               layer = \"geoBoundaries-NGA-ADM2\",\n               crs = 4326)"
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html#data-wrangling",
+    "href": "In-class_Ex2/In-class_Ex2.html#data-wrangling",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "Data Wrangling",
+    "text": "Data Wrangling\n\nRecording NA values into string\nThe code chunk below replaces NA values in status_cle field into Unknown.\n\nwp_nga <- read_rds(\"data/wp_nga.rds\") %>%\n  mutate(status_cle =\nreplace_na(status_cle, \"Unknown\"))\n\n\n\nEDA\nThe code chunk below uses freq() to display the distribution of status_cle field.\n\nfreq(data = wp_nga,\n     input = 'status_cle')"
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html#extracting-water-point-data",
+    "href": "In-class_Ex2/In-class_Ex2.html#extracting-water-point-data",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "Extracting Water Point Data",
+    "text": "Extracting Water Point Data\nIn this section, I learn how to extract water point records by using classes in status_cle field.\n\nExtracting functional water point\nThe code chunk below uses filter() to select functional water points.\n\nwp_functional <- wp_nga %>%\n  filter(status_cle %in%\n           c(\"Functional\",\n             \"Functional but not in use\",\n             \"Functional but needs repair\"))\n\n\nfreq(data = wp_functional,\n     input = 'status_cle')\n\n\n\nExtracting non-functional water point\nThe code chunk below uses filter() to select non-functional water points.\n\nwp_nonfunctional <- wp_nga %>%\n  filter(status_cle %in%\n           c(\"Non-Functional\",\n             \"Non-Functional due to dry season\",\n             \"Abandoned/Decommissioned\",\n             \"Abandoned\",\n             \"Non functional due to dry season\"))\n\n\nfreq(data = wp_nonfunctional,\n     input = 'status_cle')\n\n\n\nExtracting water point with Unknown class\nThe code chunk below uses filter() to select Unknown water points.\n\nwp_unknown <- wp_nga %>%\n  filter(status_cle %in%\n           c(\"Unknown\"))\n\n\nfreq(data = wp_unknown,\n     input = 'status_cle')"
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html#performing-point-in-polygon-count",
+    "href": "In-class_Ex2/In-class_Ex2.html#performing-point-in-polygon-count",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "Performing Point-in-Polygon Count",
+    "text": "Performing Point-in-Polygon Count\n\nnga_wp <- nga %>% \n  mutate(`total wp` = lengths(\n    st_intersects(nga, wp_nga))) %>%\n  mutate(`wp functional` = lengths(\n    st_intersects(nga, wp_functional))) %>%\n  mutate(`wp non-functional` = lengths(\n    st_intersects(nga, wp_nonfunctional))) %>%\n  mutate(`wp unknown` = lengths(\n    st_intersects(nga, wp_unknown)))"
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html#saving-the-analytical-data-table",
+    "href": "In-class_Ex2/In-class_Ex2.html#saving-the-analytical-data-table",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "Saving the Analytical Data Table",
+    "text": "Saving the Analytical Data Table\nThe code chunk below uses mutate() to derive 2 fields namely pct_functional and pct_non-functional.\n\nnga_wp <- nga_wp %>%\n  mutate(pct_functional = `wp functional`/`total wp`) %>%\n  mutate(`pct_non-functional` = `wp non-functional`/`total wp`)\n\nThe code chunk below saves the sf data table into rds format.\n\nwrite_rds(nga_wp, \"data/wp_nga.rds\")"
+  },
+  {
+    "objectID": "In-class_Ex2/In-class_Ex2.html#visualizing-the-spatial-distribution-of-water-points",
+    "href": "In-class_Ex2/In-class_Ex2.html#visualizing-the-spatial-distribution-of-water-points",
+    "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
+    "section": "Visualizing the Spatial Distribution of Water Points",
+    "text": "Visualizing the Spatial Distribution of Water Points\n\nnga_wp <- read_rds(\"data/wp_nga.rds\")\ntotal <- qtm(nga_wp, \"total wp\")\nwp_functional <- qtm(nga_wp, \"wp functional\")\nwp_nonfunctional <- qtm(nga_wp, \"wp non-functional\")\nunknown <- qtm(nga_wp, \"wp unknown\")\n\ntmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp = 1, ncol = 2)"
   }
 ]
