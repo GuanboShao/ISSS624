@@ -1,4 +1,223 @@
 ---
 title: "Take-home Exercise 1: Geospatial Analytics for Social Good"
+execute: 
+  warning: false
+  message: false
+format: html
 editor: visual
 ---
+
+## Overview
+
+In this take-home exercise, with the purpose to address the issue of water supply in Nigeria, I will be using global and local measures of spatial Association techniques to reveal the spatial patterns of Non-functional water points in Nigeria.
+
+## The Data
+
+### Aspatial data
+
+The aspatial data includes the water point data that can be downloaded from [WPdx+ Global Data Repository](https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj/data). For this analysis, Shapefile data format is downloaded. The shapefile includes global water point data, the Nigeria water point data which will be used in our analysis is filtered in data importing section. The files' names are renamed to "geo_export" for easier use.
+
+### Geospatial data
+
+The geospatial data includes the Nigeria Level-2 Administratie Boundary (which is also known as Local Government Data LGA) polygon features GIS data which can be downloaded from [geoBoundaries](https://www.geoboundaries.org/). In "*Download geoBoundaries*" section, key in "Nigeria" to *Name*, and download the *ADM2 2020* data file. The files with name "geoBoundaries-NGA-ADM2" are used.
+
+## Getting Started
+
+In this exercise, the following R packages will be used:
+
+-   [**sf**](https://r-spatial.github.io/sf/) for importing, managing, and processing geospatial data
+
+-   [**tidyverse**](https://www.tidyverse.org/packages/) for importing, wrangling, and visualizing data
+
+    -   [**tidyr**](https://tidyr.tidyverse.org/) for manipulating data
+
+    -   [**dplyr**](https://dplyr.tidyverse.org/) for transforming data
+
+    -   [**ggplot2**](https://ggplot2.tidyverse.org/) for visualizing data
+
+-   [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) for plotting cartographic quality choropleth map
+
+-   [**spdep**](https://cran.r-project.org/web/packages/spdep/spdep.pdf) for computing spatial weights, global and local spatial autocorrelation statistics
+
+-   [**funModeling**](https://cran.r-project.org/web/packages/funModeling/vignettes/funModeling_quickstart.html) for Exploratory Data Analysis (EDA)
+
+The code chunk below installs and loads R packages into R environment.
+
+```{r}
+pacman::p_load(sf, tidyverse, tmap, spdep, funModeling)
+```
+
+## Importing the data into R environment
+
+### Importing water point shapefile into R environment
+
+The code chunk below uses [`st_read()`](https://cran.r-project.org/web/packages/sf/vignettes/sf2.html) of **sf** package to import water point data *geo_export* shapefile into R and save as simple feature data frame called *wp*.
+
+[`st_transform()`](https://r-spatial.github.io/sf/reference/st_transform.html) of **sf** package is used to transform original geographic coordinate reference system (CRS) *WGS84* to *EPSG:26391 Minna/Nigeria West Belt*, which is more appropriate for our analysis.
+
+[`filter()`](https://dplyr.tidyverse.org/reference/filter.html) of **dplyr** package is used to extract water point records of Nigeria.
+
+```{r eval=FALSE}
+wp <- st_read(dsn = "data/aspatial",
+              layer = "geo_export") %>%
+  st_transform(crs = 26391) %>%
+  filter(clean_coun == "Nigeria")
+```
+
+The code chunk below checks the CRS of *wp*.
+
+```{r eval=FALSE}
+st_crs(wp)
+```
+
+The code chunk below uses [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) of **readr** package to save the extracted sf data table *wp* into rds data format file called *wp_nga* and is saved in *data* folder.
+
+```{r eval=FALSE}
+wp_nga <- write_rds(wp, "data/wp_nga.rds")
+```
+
+### Importing Nigeria LGA boundary data into R environment
+
+Similar to importing water point shapefile, the geospatial data *geoBoundaries-NGA-ADM2* shapefile is imported into R and saved as simple feature data frame called *nga*.
+
+```{r eval=FALSE}
+nga <- st_read(dsn = "data/geospatial",
+               layer = "geoBoundaries-NGA-ADM2") %>%
+  st_transform(crs = 26391)
+```
+
+The code chunk below checks the CRS of *nga*.
+
+```{r eval=FALSE}
+st_crs(nga)
+```
+
+## Data Wrangling
+
+### Recording NA values into string
+
+The code chunk below uses [`replace_na()`](https://tidyr.tidyverse.org/reference/replace_na.html) to recode all NA values in *status_cle* field into *Unknown*.
+
+[`mutate()`](https://dplyr.tidyverse.org/reference/mutate.html) of **dplyr** package is used to derive new variables called *Unknown*.
+
+```{r eval=FALSE}
+wp_nga <- read_rds("data/wp_nga.rds") %>%
+  mutate(status_cle =
+replace_na(status_cle, "Unknown"))
+```
+
+### EDA
+
+The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of *status_cle* field in *wp_nga*.
+
+```{r eval=FALSE}
+freq(data = wp_nga,
+     input = 'status_cle')
+```
+
+## Extracting Water Point Data
+
+In this section, I will use `filter()` to extract water point records by using classes in *status_cle* field.
+
+### Extracting functional water point
+
+The code chunk below uses `filter()` to select functional water points from *wp_nga* and name as *wp_functional*.
+
+```{r eval=FALSE}
+wp_functional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Functional",
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+The code chunk below uses `freq()` to display the distribution of functional water points.
+
+```{r eval=FALSE}
+freq(data = wp_functional,
+     input = 'status_cle')
+```
+
+### Extracting non-functional water point
+
+The code chunk below uses `filter()` to select non-functional water points from *wp_nga* and name as *wp_nonfunctional*.
+
+```{r eval=FALSE}
+wp_nonfunctional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Non-Functional",
+             "Non-Functional due to dry season",
+             "Abandoned/Decommissioned",
+             "Abandoned",
+             "Non functional due to dry season"))
+```
+
+The code chunk below uses `freq()` to display the distribution of non-functional water points.
+
+```{r eval=FALSE}
+freq(data = wp_nonfunctional,
+     input = 'status_cle')
+```
+
+### Extracting water point with Unknown class
+
+The code chunk below uses `filter()` to select Unknown water points from *wp_nga* and name as *wp_unknown*.
+
+```{r eval=FALSE}
+wp_unknown <- wp_nga %>%
+  filter(status_cle %in%
+           c("Unknown"))
+```
+
+The code chunk below uses `freq()` to display the distribution of unknown water points.
+
+```{r eval=FALSE}
+freq(data = wp_unknown,
+     input = 'status_cle')
+```
+
+## Performing Point-in-Polygon Count
+
+In this section, [`st_intersects()`](https://r-spatial.github.io/sf/reference/geos_binary_pred.html) of **sf** package to identify the water points located in each region of Nigeria, [`length()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/length) of **Base R** is used to calculate the number of water points in each region.
+
+[`mutate()`](https://dplyr.tidyverse.org/reference/mutate.html) of **dplyr** package is used to derive new variables namely *total wp*, *wp functional*, *wp non-functional*, and *wp unknown*.
+
+```{r eval=FALSE}
+nga_wp <- nga %>% 
+  mutate(`total wp` = lengths(st_intersects(nga, wp_nga))) %>%
+  mutate(`wp functional` = lengths(st_intersects(nga, wp_functional))) %>%
+  mutate(`wp non-functional` = lengths(st_intersects(nga, wp_nonfunctional))) %>%
+  mutate(`wp unknown` = lengths(st_intersects(nga, wp_unknown)))
+```
+
+## Saving the Analytical Data Table
+
+The code chunk below uses `mutate()` to derive 2 fields namely *pct_functional* and *pct_non-functional*.
+
+```{r eval=FALSE}
+nga_wp <- nga_wp %>%
+  mutate(pct_functional = `wp functional`/`total wp`) %>%
+  mutate(`pct_non-functional` = `wp non-functional`/`total wp`)
+```
+
+The code chunk below uses [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) of **readr** package to save the extracted sf data table nga\_*wp* into rds data format file called *wp_nga* and is saved in *data* folder.
+
+```{r eval=FALSE}
+write_rds(nga_wp, "data/wp_nga.rds")
+```
+
+Upon completing the above sections, we achieve an rds data format file called *wp_nga* which has a file size of 2.1MB. This allows us to keep a small size data file and delete raw data files which occupy space of several gigabytes. In the following section, wp_nga.rds will be used for analysis. A RMarkdown code [`{r eval=FALSE}`](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) is used to skip evaluating previous code chunks and exclude their results so that the *wp_nga.rds* file will not be modified. If need to reproduce the previous sections, please change `{r eval=FALSE}` to `{r}` then proceed to run the code chunks.
+
+## Visualizing the Spatial Distribution of Water Points
+
+```{r}
+#| fig-width: 14
+#| fig-height: 12
+nga_wp <- read_rds("data/wp_nga.rds")
+total <- qtm(nga_wp, "total wp")
+wp_functional <- qtm(nga_wp, "wp functional")
+wp_nonfunctional <- qtm(nga_wp, "wp non-functional")
+unknown <- qtm(nga_wp, "wp unknown")
+
+tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp = 1, ncol = 2)
+```

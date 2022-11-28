@@ -355,5 +355,68 @@
     "title": "In-class Exercise 2: Geospatial Analytics for Social Good",
     "section": "Visualizing the Spatial Distribution of Water Points",
     "text": "Visualizing the Spatial Distribution of Water Points\n\nnga_wp <- read_rds(\"data/wp_nga.rds\")\ntotal <- qtm(nga_wp, \"total wp\")\nwp_functional <- qtm(nga_wp, \"wp functional\")\nwp_nonfunctional <- qtm(nga_wp, \"wp non-functional\")\nunknown <- qtm(nga_wp, \"wp unknown\")\n\ntmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp = 1, ncol = 2)"
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html",
+    "href": "Take-home_Ex1/Take-home_Ex1.html",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "",
+    "text": "In this take-home exercise, with the purpose to address the issue of water supply in Nigeria, I will be using global and local measures of spatial Association techniques to reveal the spatial patterns of Non-functional water points in Nigeria."
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#the-data",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#the-data",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "The Data",
+    "text": "The Data\n\nAspatial data\nThe aspatial data includes the water point data that can be downloaded from WPdx+ Global Data Repository. For this analysis, Shapefile data format is downloaded. The shapefile includes global water point data, the Nigeria water point data which will be used in our analysis is filtered in data importing section. The files’ names are renamed to “geo_export” for easier use.\n\n\nGeospatial data\nThe geospatial data includes the Nigeria Level-2 Administratie Boundary (which is also known as Local Government Data LGA) polygon features GIS data which can be downloaded from geoBoundaries. In “Download geoBoundaries” section, key in “Nigeria” to Name, and download the ADM2 2020 data file. The files with name “geoBoundaries-NGA-ADM2” are used."
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#getting-started",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#getting-started",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Getting Started",
+    "text": "Getting Started\nIn this exercise, the following R packages will be used:\n\nsf for importing, managing, and processing geospatial data\ntidyverse for importing, wrangling, and visualizing data\n\ntidyr for manipulating data\ndplyr for transforming data\nggplot2 for visualizing data\n\ntmap for plotting cartographic quality choropleth map\nspdep for computing spatial weights, global and local spatial autocorrelation statistics\nfunModeling for Exploratory Data Analysis (EDA)\n\nThe code chunk below installs and loads R packages into R environment.\n\npacman::p_load(sf, tidyverse, tmap, spdep, funModeling)"
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#importing-the-data-into-r-environment",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#importing-the-data-into-r-environment",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Importing the data into R environment",
+    "text": "Importing the data into R environment\n\nImporting water point shapefile into R environment\nThe code chunk below uses st_read() of sf package to import water point data geo_export shapefile into R and save as simple feature data frame called wp.\nst_transform() of sf package is used to transform original geographic coordinate reference system (CRS) WGS84 to EPSG:26391 Minna/Nigeria West Belt, which is more appropriate for our analysis.\nfilter() of dplyr package is used to extract water point records of Nigeria.\n\nwp <- st_read(dsn = \"data/aspatial\",\n              layer = \"geo_export\") %>%\n  st_transform(crs = 26391) %>%\n  filter(clean_coun == \"Nigeria\")\n\nThe code chunk below checks the CRS of wp.\n\nst_crs(wp)\n\nThe code chunk below uses write_rds() of readr package to save the extracted sf data table wp into rds data format file called wp_nga and is saved in data folder.\n\nwp_nga <- write_rds(wp, \"data/wp_nga.rds\")\n\n\n\nImporting Nigeria LGA boundary data into R environment\nSimilar to importing water point shapefile, the geospatial data geoBoundaries-NGA-ADM2 shapefile is imported into R and saved as simple feature data frame called nga.\n\nnga <- st_read(dsn = \"data/geospatial\",\n               layer = \"geoBoundaries-NGA-ADM2\") %>%\n  st_transform(crs = 26391)\n\nThe code chunk below checks the CRS of nga.\n\nst_crs(nga)"
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#data-wrangling",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#data-wrangling",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Data Wrangling",
+    "text": "Data Wrangling\n\nRecording NA values into string\nThe code chunk below uses replace_na() to recode all NA values in status_cle field into Unknown.\nmutate() of dplyr package is used to derive new variables called Unknown.\n\nwp_nga <- read_rds(\"data/wp_nga.rds\") %>%\n  mutate(status_cle =\nreplace_na(status_cle, \"Unknown\"))\n\n\n\nEDA\nThe code chunk below uses freq() of funModeling package to display the distribution of status_cle field in wp_nga.\n\nfreq(data = wp_nga,\n     input = 'status_cle')"
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#extracting-water-point-data",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#extracting-water-point-data",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Extracting Water Point Data",
+    "text": "Extracting Water Point Data\nIn this section, I will use filter() to extract water point records by using classes in status_cle field.\n\nExtracting functional water point\nThe code chunk below uses filter() to select functional water points from wp_nga and name as wp_functional.\n\nwp_functional <- wp_nga %>%\n  filter(status_cle %in%\n           c(\"Functional\",\n             \"Functional but not in use\",\n             \"Functional but needs repair\"))\n\nThe code chunk below uses freq() to display the distribution of functional water points.\n\nfreq(data = wp_functional,\n     input = 'status_cle')\n\n\n\nExtracting non-functional water point\nThe code chunk below uses filter() to select non-functional water points from wp_nga and name as wp_nonfunctional.\n\nwp_nonfunctional <- wp_nga %>%\n  filter(status_cle %in%\n           c(\"Non-Functional\",\n             \"Non-Functional due to dry season\",\n             \"Abandoned/Decommissioned\",\n             \"Abandoned\",\n             \"Non functional due to dry season\"))\n\nThe code chunk below uses freq() to display the distribution of non-functional water points.\n\nfreq(data = wp_nonfunctional,\n     input = 'status_cle')\n\n\n\nExtracting water point with Unknown class\nThe code chunk below uses filter() to select Unknown water points from wp_nga and name as wp_unknown.\n\nwp_unknown <- wp_nga %>%\n  filter(status_cle %in%\n           c(\"Unknown\"))\n\nThe code chunk below uses freq() to display the distribution of unknown water points.\n\nfreq(data = wp_unknown,\n     input = 'status_cle')"
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#performing-point-in-polygon-count",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#performing-point-in-polygon-count",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Performing Point-in-Polygon Count",
+    "text": "Performing Point-in-Polygon Count\nIn this section, st_intersects() of sf package to identify the water points located in each region of Nigeria, length() of Base R is used to calculate the number of water points in each region.\nmutate() of dplyr package is used to derive new variables namely total wp, wp functional, wp non-functional, and wp unknown.\n\nnga_wp <- nga %>% \n  mutate(`total wp` = lengths(st_intersects(nga, wp_nga))) %>%\n  mutate(`wp functional` = lengths(st_intersects(nga, wp_functional))) %>%\n  mutate(`wp non-functional` = lengths(st_intersects(nga, wp_nonfunctional))) %>%\n  mutate(`wp unknown` = lengths(st_intersects(nga, wp_unknown)))"
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#saving-the-analytical-data-table",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#saving-the-analytical-data-table",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Saving the Analytical Data Table",
+    "text": "Saving the Analytical Data Table\nThe code chunk below uses mutate() to derive 2 fields namely pct_functional and pct_non-functional.\n\nnga_wp <- nga_wp %>%\n  mutate(pct_functional = `wp functional`/`total wp`) %>%\n  mutate(`pct_non-functional` = `wp non-functional`/`total wp`)\n\nThe code chunk below uses write_rds() of readr package to save the extracted sf data table nga_wp into rds data format file called wp_nga and is saved in data folder.\n\nwrite_rds(nga_wp, \"data/wp_nga.rds\")\n\nUpon completing the above sections, we achieve an rds data format file called wp_nga which has a file size of 2.1MB. This allows us to keep a small size data file and delete raw data files which occupy space of several gigabytes. In the following section, wp_nga.rds will be used for analysis. A RMarkdown code {r eval=FALSE} is used to skip evaluating previous code chunks and exclude their results so that the wp_nga.rds file will not be modified. If need to reproduce the previous sections, please change {r eval=FALSE} to {r} then proceed to run the code chunks."
+  },
+  {
+    "objectID": "Take-home_Ex1/Take-home_Ex1.html#visualizing-the-spatial-distribution-of-water-points",
+    "href": "Take-home_Ex1/Take-home_Ex1.html#visualizing-the-spatial-distribution-of-water-points",
+    "title": "Take-home Exercise 1: Geospatial Analytics for Social Good",
+    "section": "Visualizing the Spatial Distribution of Water Points",
+    "text": "Visualizing the Spatial Distribution of Water Points\n\nnga_wp <- read_rds(\"data/wp_nga.rds\")\ntotal <- qtm(nga_wp, \"total wp\")\nwp_functional <- qtm(nga_wp, \"wp functional\")\nwp_nonfunctional <- qtm(nga_wp, \"wp non-functional\")\nunknown <- qtm(nga_wp, \"wp unknown\")\n\ntmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp = 1, ncol = 2)"
   }
 ]
