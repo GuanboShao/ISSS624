@@ -2,7 +2,6 @@
 title: "Take-home Exercise 1: Geospatial Analytics for Social Good"
 execute: 
   warning: false
-  message: false
 format: html
 editor: visual
 ---
@@ -64,11 +63,111 @@ wp <- st_read(dsn = "data/aspatial",
   filter(clean_coun == "Nigeria")
 ```
 
+~Reading\ layer\ \`geo_export'\ from\ data\ source~
+
+~\`D:\\GuanboShao\\ISSS624\\Take-home_Ex1\\data\\aspatial'\ using\ driver\ \`ESRI\ Shapefile'~
+
+~Simple\ feature\ collection\ with\ 362604\ features\ and\ 72\ fields~
+
+~Geometry\ type:\ POINT~
+
+~Dimension:\ \ \ \ \ XY~
+
+~Bounding\ box:\ \ xmin:\ -91.75435\ ymin:\ -27.31495\ xmax:\ 92.32694\ ymax:\ 26.65254~
+
+~Geodetic\ CRS:\ \ WGS84(DD)~
+
+From the output message, the simple feature data frame has 362604 features and 72 fields.
+
 The code chunk below checks the CRS of *wp*.
 
 ```{r eval=FALSE}
 st_crs(wp)
 ```
+
+~Coordinate\ Reference\ System:~
+
+~User\ input:\ EPSG:26391~
+
+~wkt:~
+
+~PROJCRS\["Minna\ /\ Nigeria\ West\ Belt",~
+
+~BASEGEOGCRS\["Minna",~
+
+~DATUM\["Minna",~
+
+~ELLIPSOID\["Clarke\ 1880\ (RGS)",6378249.145,293.465,~
+
+~LENGTHUNIT\["metre",1\]\]\],~
+
+~PRIMEM\["Greenwich",0,~
+
+~ANGLEUNIT\["degree",0.0174532925199433\]\],~
+
+~ID\["EPSG",4263\]\],~
+
+~CONVERSION\["Nigeria\ West\ Belt",~
+
+~METHOD\["Transverse\ Mercator",~
+
+~ID\["EPSG",9807\]\],~
+
+~PARAMETER\["Latitude\ of\ natural\ origin",4,~
+
+~ANGLEUNIT\["degree",0.0174532925199433\],~
+
+~ID\["EPSG",8801\]\],~
+
+~PARAMETER\["Longitude\ of\ natural\ origin",4.5,~
+
+~ANGLEUNIT\["degree",0.0174532925199433\],~
+
+~ID\["EPSG",8802\]\],~
+
+~PARAMETER\["Scale\ factor\ at\ natural\ origin",0.99975,~
+
+~SCALEUNIT\["unity",1\],~
+
+~ID\["EPSG",8805\]\],~
+
+~PARAMETER\["False\ easting",230738.26,~
+
+~LENGTHUNIT\["metre",1\],~
+
+~ID\["EPSG",8806\]\],~
+
+~PARAMETER\["False\ northing",0,~
+
+~LENGTHUNIT\["metre",1\],~
+
+~ID\["EPSG",8807\]\]\],~
+
+~CS\[Cartesian,2\],~
+
+~AXIS\["(E)",east,~
+
+~ORDER\[1\],~
+
+~LENGTHUNIT\["metre",1\]\],~
+
+~AXIS\["(N)",north,~
+
+~ORDER\[2\],~
+
+~LENGTHUNIT\["metre",1\]\],~
+
+~USAGE\[~
+
+~SCOPE\["Engineering\ survey,\ topographic\ mapping."\],~
+
+~AREA\["Nigeria\ -\ onshore\ west\ of\ 6°30'E,\ onshore\ and\ offshore\ shelf."\],~
+
+~BBOX\[3.57,2.69,13.9,6.5\]\],~
+
+~ID\["EPSG",26391\]\]~
+
+The coordinates system has been changed to ESPG code 26391, which is Nigeria West Belt.
 
 The code chunk below uses [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) of **readr** package to save the extracted sf data table *wp* into rds data format file called *wp_nga* and is saved in *data* folder.
 
@@ -114,6 +213,10 @@ The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.
 freq(data = wp_nga,
      input = 'status_cle')
 ```
+
+![](images/distribution%20of%20status.png){fig-align="center"}
+
+According to the distribution diagram of each status, the proportion of functional water points includes *Functional*, *Functional but not in use*, and *Functional but needs repair*, which is **54.88%** in total. The proportion of non-functional water points includes *Non-Functional*, *Non-Functional due to dry season*, *Abandoned/Decommissioned*, *Abandoned*, and *Non functional due to dry season* which is **33.9%** in total.
 
 ## Extracting Water Point Data
 
@@ -192,7 +295,7 @@ nga_wp <- nga %>%
 
 ## Saving the Analytical Data Table
 
-The code chunk below uses `mutate()` to derive 2 fields namely *pct_functional* and *pct_non-functional*.
+The code chunk below uses `mutate()` to derive 2 fields namely *pct_functional* and *pct_non-functional*, which is the proportion of functional water points and non-functional water points in each region.
 
 ```{r eval=FALSE}
 nga_wp <- nga_wp %>%
@@ -210,6 +313,12 @@ Upon completing the above sections, we achieve an rds data format file called *w
 
 ## Visualizing the Spatial Distribution of Water Points
 
+### Plotting thematic maps by using qtm()
+
+[`qtm()`](https://search.r-project.org/CRAN/refmans/tmap/html/qtm.html) of **tmap** package provides a quick visualization of thematic map.
+
+[`tmap_arrange()`](https://rdrr.io/cran/tmap/man/tmap_arrange.html) is used to create multiple stand-alone maps.
+
 ```{r}
 #| fig-width: 14
 #| fig-height: 12
@@ -221,3 +330,199 @@ unknown <- qtm(nga_wp, "wp unknown")
 
 tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp = 1, ncol = 2)
 ```
+
+### Plotting thematic maps by using tmap elements
+
+[`tm_shape()`](https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_shape) is used to define a spatial data object.
+
+[`tm_fill()`](https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_fill) is used to fill the polygons, a classification method is selected by *style* option. An equal map is obtained by setting *style = "equal"*, the number of categories *n* is set to 4. A quantile map is obtained by setting *style = "quantile"*, and *n = 4*.
+
+[`tm_layout()`](https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_layout) is used to customize the map layout, including title and legend.
+
+[`tm_borders()`](https://www.rdocumentation.org/packages/tmap/versions/0.7/topics/tm_borders) is used to define the borders of the polygons, *alpha* defines the transparency of line.
+
+[`tmap_arrange()`](https://rdrr.io/cran/tmap/man/tmap_arrange.html) is used to create multiple stand-alone maps.
+
+```{r}
+#| fig-width: 14
+#| fig-height: 12
+map_equal <- tm_shape(nga_wp)+
+  tm_fill(c("wp functional", "wp non-functional"),
+          n = 4,
+          style = "equal", 
+          palette = "Blues") +
+  tm_layout(main.title = "Distribution of Water Points \n(Equal classification)",
+            main.title.position = "center",
+            main.title.size = 1.5,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+
+map_quantile <- tm_shape(nga_wp)+
+  tm_fill(c("wp functional", "wp non-functional"),
+          n = 4,
+          style = "quantile", 
+          palette = "Greens") +
+  tm_layout(main.title = "Distribution of Water Points \n(Quantile classification)",
+            main.title.position = "center",
+            main.title.size = 1.5,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(map_equal, map_quantile, asp = 1, ncol = 2)
+```
+
+## Cluster and Outlier Analysis
+
+### Computing contiguity spatial weights
+
+[`poly2nb()`](https://r-spatial.github.io/spdep/reference/poly2nb.html) of **spdep** package is used to compute contiguity weight matrices of Nigeria. This function with default setting *queen = TRUE* builds a neighbours list based on regions with contiguous boundaries.
+
+```{r}
+wm_q <- poly2nb(nga_wp, 
+                queen = TRUE)
+set.ZeroPolicyOption(TRUE)
+summary(wm_q)
+```
+
+In Nigeria, there are 774 regions, the most connected region has 14 neighbors. There are 2 regions with only 1 neighbor.
+
+### Row-standardized weights matrix
+
+[`nb2listw()`](https://www.rdocumentation.org/packages/spdep/versions/1.2-7/topics/nb2listw) of **spdep** package is used to assign spatial weights to each polygon in neighbors list. *style* is set to *'W'* for row standardized option. *zero.policy* is set to TRUE to insert weights vectors of zero length for regions without neighbor in the neighbors list.
+
+```{r}
+rswm_q <- nb2listw(wm_q, 
+                   style="W",
+                   zero.policy = TRUE)
+rswm_q
+```
+
+### Maron's I test
+
+[`moran.test()`](https://r-spatial.github.io/spdep/reference/moran.test.html) of **spdep** package is used to perform Moran's I statistics testing which measures the spatial autocorrelation and how one region is similar to its neighbors by standardizing the spatial autocovariance by the variance of data.
+
+```{r}
+moran.test(nga_wp$`wp non-functional`, 
+           listw=rswm_q, 
+           zero.policy = TRUE, 
+           na.action=na.omit)
+```
+
+The p-value for non-functional water points is statistically significant, therefore the spatial distribution is more spatially clustered than would be expected if underlying spatial processes were random.
+
+#### Computing Monte Carlo Moran's I
+
+[`moran.mc()`](https://r-spatial.github.io/spdep/reference/moran.mc.html) of **spdep** package is used to perform permutation test for Moran's I statistic. *nsim = 999* means 1000 simulations will be performed.
+
+```{r}
+set.seed(1234)
+bperm= moran.mc(nga_wp$`wp non-functional`, 
+                listw=rswm_q, 
+                nsim=999, 
+                zero.policy = TRUE, 
+                na.action=na.omit)
+bperm
+```
+
+The Moran's I value is 0.43451, therefore we can reject the null hypothesis and conclude that positive spatial autocorrelation is occurring.
+
+#### Visualizing Monte Carlo Moran's I
+
+[`hist()`](https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/hist) and [`abline()`](https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/abline) of **R Graphics** are used to plot the distribution of statistical values.
+
+```{r}
+hist(bperm$res, 
+     freq=TRUE, 
+     breaks=20, 
+     xlab="Simulated Moran's I")
+abline(v=0, 
+       col="red") 
+```
+
+### Geary's C test
+
+[`geary.test()`](https://r-spatial.github.io/spdep/reference/geary.test.html) of **spdep** package is used to perform Geary's C test which measures spatial autocorrelation and determine whether adjacent similar observations are correlated by summing the square differences between pairs of data.
+
+```{r}
+geary.test(nga_wp$`wp non-functional`,
+           listw=rswm_q)
+```
+
+The Geary's C test statistic is 0.6166737225 \< 1, therefore there is a positive spatial autocorrrelation and clustered.
+
+#### Computing Monte Carlo Geary's C
+
+[`geary.mc()`](https://r-spatial.github.io/spdep/reference/geary.mc.html) of **spdep** package is used to perform permutation test for Geary's C statistic. *nsim = 999* means 1000 simulations will be performed.
+
+```{r}
+set.seed(1234)
+bperm=geary.mc(nga_wp$`wp non-functional`, 
+               listw=rswm_q, 
+               nsim=999)
+bperm
+```
+
+The Monte Carlo Geary's C test statistic shows same result as Geary's C test result which is 0.61667 \< 1, therefore there is a positive spatial autocorrrelation and clustered.
+
+#### Visualizing Monte Carlo Geary's C
+
+[`hist()`](https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/hist) and [`abline()`](https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/abline) of **R Graphics** are used to plot the distribution of statistical values.
+
+```{r}
+hist(bperm$res, 
+     freq=TRUE, 
+     breaks=20, 
+     xlab="Simulated Geary's C")
+abline(v=1, 
+       col="red") 
+```
+
+### Compute Moran's I correlogram
+
+[`sp.correlogram()`](https://r-spatial.github.io/spdep/reference/sp.correlogram.html) of **spdep** package is used to compute a 5-lag spatial correlogram of non-functional water points. The global spatial autocorrelation is set to Moran's I by *method = "I"*.
+
+`plot()` of **base Graph** is used to plot the output.
+
+```{r}
+MI_corr <- sp.correlogram(wm_q, 
+                          nga_wp$`wp non-functional`, 
+                          order=5, 
+                          method="I", 
+                          style="W")
+plot(MI_corr)
+```
+
+```{r}
+print(MI_corr)
+```
+
+### Compute Geary's C correlogram
+
+[`sp.correlogram()`](https://r-spatial.github.io/spdep/reference/sp.correlogram.html) of **spdep** package is used to compute a 5-lag spatial correlogram of non-functional water points. The global spatial autocorrelation is set to Geary's C by *method = "C"*.
+
+`plot()` of **base Graph** is used to plot the output.
+
+```{r}
+GC_corr <- sp.correlogram(wm_q, 
+                          nga_wp$`wp non-functional`, 
+                          order=5, 
+                          method="C", 
+                          style="W")
+plot(GC_corr)
+```
+
+```{r}
+print(GC_corr)
+```
+
+### Computing local Moran's I
+
+## Visualizing the Hot Spot Area of Water Points

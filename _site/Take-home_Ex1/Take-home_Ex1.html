@@ -229,7 +229,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#performing-point-in-polygon-count" id="toc-performing-point-in-polygon-count" class="nav-link" data-scroll-target="#performing-point-in-polygon-count">Performing Point-in-Polygon Count</a></li>
   <li><a href="#saving-the-analytical-data-table" id="toc-saving-the-analytical-data-table" class="nav-link" data-scroll-target="#saving-the-analytical-data-table">Saving the Analytical Data Table</a></li>
-  <li><a href="#visualizing-the-spatial-distribution-of-water-points" id="toc-visualizing-the-spatial-distribution-of-water-points" class="nav-link" data-scroll-target="#visualizing-the-spatial-distribution-of-water-points">Visualizing the Spatial Distribution of Water Points</a></li>
+  <li><a href="#visualizing-the-spatial-distribution-of-water-points" id="toc-visualizing-the-spatial-distribution-of-water-points" class="nav-link" data-scroll-target="#visualizing-the-spatial-distribution-of-water-points">Visualizing the Spatial Distribution of Water Points</a>
+  <ul class="collapse">
+  <li><a href="#plotting-thematic-maps-by-using-qtm" id="toc-plotting-thematic-maps-by-using-qtm" class="nav-link" data-scroll-target="#plotting-thematic-maps-by-using-qtm">Plotting thematic maps by using qtm()</a></li>
+  <li><a href="#plotting-thematic-maps-by-using-tmap-elements" id="toc-plotting-thematic-maps-by-using-tmap-elements" class="nav-link" data-scroll-target="#plotting-thematic-maps-by-using-tmap-elements">Plotting thematic maps by using tmap elements</a></li>
+  </ul></li>
+  <li><a href="#cluster-and-outlier-analysis" id="toc-cluster-and-outlier-analysis" class="nav-link" data-scroll-target="#cluster-and-outlier-analysis">Cluster and Outlier Analysis</a>
+  <ul class="collapse">
+  <li><a href="#computing-contiguity-spatial-weights" id="toc-computing-contiguity-spatial-weights" class="nav-link" data-scroll-target="#computing-contiguity-spatial-weights">Computing contiguity spatial weights</a></li>
+  <li><a href="#row-standardized-weights-matrix" id="toc-row-standardized-weights-matrix" class="nav-link" data-scroll-target="#row-standardized-weights-matrix">Row-standardized weights matrix</a></li>
+  <li><a href="#marons-i-test" id="toc-marons-i-test" class="nav-link" data-scroll-target="#marons-i-test">Maron’s I test</a></li>
+  <li><a href="#gearys-c-test" id="toc-gearys-c-test" class="nav-link" data-scroll-target="#gearys-c-test">Geary’s C test</a></li>
+  <li><a href="#compute-morans-i-correlogram" id="toc-compute-morans-i-correlogram" class="nav-link" data-scroll-target="#compute-morans-i-correlogram">Compute Moran’s I correlogram</a></li>
+  <li><a href="#compute-gearys-c-correlogram" id="toc-compute-gearys-c-correlogram" class="nav-link" data-scroll-target="#compute-gearys-c-correlogram">Compute Geary’s C correlogram</a></li>
+  <li><a href="#computing-local-morans-i" id="toc-computing-local-morans-i" class="nav-link" data-scroll-target="#computing-local-morans-i">Computing local Moran’s I</a></li>
+  </ul></li>
+  <li><a href="#visualizing-the-hot-spot-area-of-water-points" id="toc-visualizing-the-hot-spot-area-of-water-points" class="nav-link" data-scroll-target="#visualizing-the-hot-spot-area-of-water-points">Visualizing the Hot Spot Area of Water Points</a></li>
   </ul>
 </nav>
     </div>
@@ -300,10 +315,60 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">26391</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(clean_coun <span class="sc">==</span> <span class="st">"Nigeria"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><sub>Reading&nbsp;layer&nbsp;`geo_export’&nbsp;from&nbsp;data&nbsp;source</sub></p>
+<p><sub>`D:\GuanboShao\ISSS624\Take-home_Ex1\data\aspatial’&nbsp;using&nbsp;driver&nbsp;`ESRI&nbsp;Shapefile’</sub></p>
+<p><sub>Simple&nbsp;feature&nbsp;collection&nbsp;with&nbsp;362604&nbsp;features&nbsp;and&nbsp;72&nbsp;fields</sub></p>
+<p><sub>Geometry&nbsp;type:&nbsp;POINT</sub></p>
+<p><sub>Dimension:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;XY</sub></p>
+<p><sub>Bounding&nbsp;box:&nbsp;&nbsp;xmin:&nbsp;-91.75435&nbsp;ymin:&nbsp;-27.31495&nbsp;xmax:&nbsp;92.32694&nbsp;ymax:&nbsp;26.65254</sub></p>
+<p><sub>Geodetic&nbsp;CRS:&nbsp;&nbsp;WGS84(DD)</sub></p>
+<p>From the output message, the simple feature data frame has 362604 features and 72 fields.</p>
 <p>The code chunk below checks the CRS of <em>wp</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p><sub>Coordinate&nbsp;Reference&nbsp;System:</sub></p>
+<p><sub>User&nbsp;input:&nbsp;EPSG:26391</sub></p>
+<p><sub>wkt:</sub></p>
+<p><sub>PROJCRS[“Minna&nbsp;/&nbsp;Nigeria&nbsp;West&nbsp;Belt”,</sub></p>
+<p><sub>BASEGEOGCRS[“Minna”,</sub></p>
+<p><sub>DATUM[“Minna”,</sub></p>
+<p><sub>ELLIPSOID[“Clarke&nbsp;1880&nbsp;(RGS)”,6378249.145,293.465,</sub></p>
+<p><sub>LENGTHUNIT[“metre”,1]]],</sub></p>
+<p><sub>PRIMEM[“Greenwich”,0,</sub></p>
+<p><sub>ANGLEUNIT[“degree”,0.0174532925199433]],</sub></p>
+<p><sub>ID[“EPSG”,4263]],</sub></p>
+<p><sub>CONVERSION[“Nigeria&nbsp;West&nbsp;Belt”,</sub></p>
+<p><sub>METHOD[“Transverse&nbsp;Mercator”,</sub></p>
+<p><sub>ID[“EPSG”,9807]],</sub></p>
+<p><sub>PARAMETER[“Latitude&nbsp;of&nbsp;natural&nbsp;origin”,4,</sub></p>
+<p><sub>ANGLEUNIT[“degree”,0.0174532925199433],</sub></p>
+<p><sub>ID[“EPSG”,8801]],</sub></p>
+<p><sub>PARAMETER[“Longitude&nbsp;of&nbsp;natural&nbsp;origin”,4.5,</sub></p>
+<p><sub>ANGLEUNIT[“degree”,0.0174532925199433],</sub></p>
+<p><sub>ID[“EPSG”,8802]],</sub></p>
+<p><sub>PARAMETER[“Scale&nbsp;factor&nbsp;at&nbsp;natural&nbsp;origin”,0.99975,</sub></p>
+<p><sub>SCALEUNIT[“unity”,1],</sub></p>
+<p><sub>ID[“EPSG”,8805]],</sub></p>
+<p><sub>PARAMETER[“False&nbsp;easting”,230738.26,</sub></p>
+<p><sub>LENGTHUNIT[“metre”,1],</sub></p>
+<p><sub>ID[“EPSG”,8806]],</sub></p>
+<p><sub>PARAMETER[“False&nbsp;northing”,0,</sub></p>
+<p><sub>LENGTHUNIT[“metre”,1],</sub></p>
+<p><sub>ID[“EPSG”,8807]]],</sub></p>
+<p><sub>CS[Cartesian,2],</sub></p>
+<p><sub>AXIS[“(E)”,east,</sub></p>
+<p><sub>ORDER[1],</sub></p>
+<p><sub>LENGTHUNIT[“metre”,1]],</sub></p>
+<p><sub>AXIS[“(N)”,north,</sub></p>
+<p><sub>ORDER[2],</sub></p>
+<p><sub>LENGTHUNIT[“metre”,1]],</sub></p>
+<p><sub>USAGE[</sub></p>
+<p><sub>SCOPE[“Engineering&nbsp;survey,&nbsp;topographic&nbsp;mapping.”],</sub></p>
+<p><sub>AREA[“Nigeria&nbsp;-&nbsp;onshore&nbsp;west&nbsp;of&nbsp;6°30’E,&nbsp;onshore&nbsp;and&nbsp;offshore&nbsp;shelf.”],</sub></p>
+<p><sub>BBOX[3.57,2.69,13.9,6.5]],</sub></p>
+<p><sub>ID[“EPSG”,26391]]</sub></p>
+<p>The coordinates system has been changed to ESPG code 26391, which is Nigeria West Belt.</p>
 <p>The code chunk below uses <a href="https://readr.tidyverse.org/reference/read_rds.html"><code>write_rds()</code></a> of <strong>readr</strong> package to save the extracted sf data table <em>wp</em> into rds data format file called <em>wp_nga</em> and is saved in <em>data</em> folder.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wp_nga <span class="ot">&lt;-</span> <span class="fu">write_rds</span>(wp, <span class="st">"data/wp_nga.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -342,6 +407,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_nga,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'status_cle'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/distribution%20of%20status.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<p>According to the distribution diagram of each status, the proportion of functional water points includes <em>Functional</em>, <em>Functional but not in use</em>, and <em>Functional but needs repair</em>, which is <strong>54.88%</strong> in total. The proportion of non-functional water points includes <em>Non-Functional</em>, <em>Non-Functional due to dry season</em>, <em>Abandoned/Decommissioned</em>, <em>Abandoned</em>, and <em>Non functional due to dry season</em> which is <strong>33.9%</strong> in total.</p>
 </section>
 </section>
 <section id="extracting-water-point-data" class="level2">
@@ -410,7 +481,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="saving-the-analytical-data-table" class="level2">
 <h2 class="anchored" data-anchor-id="saving-the-analytical-data-table">Saving the Analytical Data Table</h2>
-<p>The code chunk below uses <code>mutate()</code> to derive 2 fields namely <em>pct_functional</em> and <em>pct_non-functional</em>.</p>
+<p>The code chunk below uses <code>mutate()</code> to derive 2 fields namely <em>pct_functional</em> and <em>pct_non-functional</em>, which is the proportion of functional water points and non-functional water points in each region.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> nga_wp <span class="sc">%&gt;%</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pct_functional =</span> <span class="st">`</span><span class="at">wp functional</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
@@ -424,6 +495,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="visualizing-the-spatial-distribution-of-water-points" class="level2">
 <h2 class="anchored" data-anchor-id="visualizing-the-spatial-distribution-of-water-points">Visualizing the Spatial Distribution of Water Points</h2>
+<section id="plotting-thematic-maps-by-using-qtm" class="level3">
+<h3 class="anchored" data-anchor-id="plotting-thematic-maps-by-using-qtm">Plotting thematic maps by using qtm()</h3>
+<p><a href="https://search.r-project.org/CRAN/refmans/tmap/html/qtm.html"><code>qtm()</code></a> of <strong>tmap</strong> package provides a quick visualization of thematic map.</p>
+<p><a href="https://rdrr.io/cran/tmap/man/tmap_arrange.html"><code>tmap_arrange()</code></a> is used to create multiple stand-alone maps.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/wp_nga.rds"</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>total <span class="ot">&lt;-</span> <span class="fu">qtm</span>(nga_wp, <span class="st">"total wp"</span>)</span>
@@ -436,6 +511,309 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><img src="Take-home_Ex1_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="1344"></p>
 </div>
 </div>
+</section>
+<section id="plotting-thematic-maps-by-using-tmap-elements" class="level3">
+<h3 class="anchored" data-anchor-id="plotting-thematic-maps-by-using-tmap-elements">Plotting thematic maps by using tmap elements</h3>
+<p><a href="https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_shape"><code>tm_shape()</code></a> is used to define a spatial data object.</p>
+<p><a href="https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_fill"><code>tm_fill()</code></a> is used to fill the polygons, a classification method is selected by <em>style</em> option. An equal map is obtained by setting <em>style = “equal”</em>, the number of categories <em>n</em> is set to 4. A quantile map is obtained by setting <em>style = “quantile”</em>, and <em>n = 4</em>.</p>
+<p><a href="https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_layout"><code>tm_layout()</code></a> is used to customize the map layout, including title and legend.</p>
+<p><a href="https://www.rdocumentation.org/packages/tmap/versions/0.7/topics/tm_borders"><code>tm_borders()</code></a> is used to define the borders of the polygons, <em>alpha</em> defines the transparency of line.</p>
+<p><a href="https://rdrr.io/cran/tmap/man/tmap_arrange.html"><code>tmap_arrange()</code></a> is used to create multiple stand-alone maps.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>map_equal <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(nga_wp)<span class="sc">+</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="fu">c</span>(<span class="st">"wp functional"</span>, <span class="st">"wp non-functional"</span>),</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">4</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"equal"</span>, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> <span class="st">"Blues"</span>) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Distribution of Water Points </span><span class="sc">\n</span><span class="st">(Equal classification)"</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">1.5</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">0.35</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>),</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>map_quantile <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(nga_wp)<span class="sc">+</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="fu">c</span>(<span class="st">"wp functional"</span>, <span class="st">"wp non-functional"</span>),</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">4</span>,</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"quantile"</span>, </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>          <span class="at">palette =</span> <span class="st">"Greens"</span>) <span class="sc">+</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">main.title =</span> <span class="st">"Distribution of Water Points </span><span class="sc">\n</span><span class="st">(Quantile classification)"</span>,</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.position =</span> <span class="st">"center"</span>,</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">main.title.size =</span> <span class="fl">1.5</span>,</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.height =</span> <span class="fl">0.45</span>, </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.width =</span> <span class="fl">0.35</span>,</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.outside =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>),</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>            <span class="at">frame =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>)</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(map_equal, map_quantile, <span class="at">asp =</span> <span class="dv">1</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex1_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="1344"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="cluster-and-outlier-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="cluster-and-outlier-analysis">Cluster and Outlier Analysis</h2>
+<section id="computing-contiguity-spatial-weights" class="level3">
+<h3 class="anchored" data-anchor-id="computing-contiguity-spatial-weights">Computing contiguity spatial weights</h3>
+<p><a href="https://r-spatial.github.io/spdep/reference/poly2nb.html"><code>poly2nb()</code></a> of <strong>spdep</strong> package is used to compute contiguity weight matrices of Nigeria. This function with default setting <em>queen = TRUE</em> builds a neighbours list based on regions with contiguous boundaries.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>wm_q <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(nga_wp, </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">queen =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.ZeroPolicyOption</span>(<span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] FALSE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(wm_q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Neighbour list object:
+Number of regions: 774 
+Number of nonzero links: 4440 
+Percentage nonzero weights: 0.7411414 
+Average number of links: 5.736434 
+1 region with no links:
+86
+Link number distribution:
+
+  0   1   2   3   4   5   6   7   8   9  10  11  12  14 
+  1   2  14  57 125 182 140 122  72  41  12   4   1   1 
+2 least connected regions:
+138 560 with 1 link
+1 most connected region:
+508 with 14 links</code></pre>
+</div>
+</div>
+<p>In Nigeria, there are 774 regions, the most connected region has 14 neighbors. There are 2 regions with only 1 neighbor.</p>
+</section>
+<section id="row-standardized-weights-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="row-standardized-weights-matrix">Row-standardized weights matrix</h3>
+<p><a href="https://www.rdocumentation.org/packages/spdep/versions/1.2-7/topics/nb2listw"><code>nb2listw()</code></a> of <strong>spdep</strong> package is used to assign spatial weights to each polygon in neighbors list. <em>style</em> is set to <em>‘W’</em> for row standardized option. <em>zero.policy</em> is set to TRUE to insert weights vectors of zero length for regions without neighbor in the neighbors list.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>rswm_q <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(wm_q, </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">style=</span><span class="st">"W"</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">zero.policy =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>rswm_q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Characteristics of weights list object:
+Neighbour list object:
+Number of regions: 774 
+Number of nonzero links: 4440 
+Percentage nonzero weights: 0.7411414 
+Average number of links: 5.736434 
+1 region with no links:
+86
+
+Weights style: W 
+Weights constants summary:
+    n     nn  S0       S1       S2
+W 773 597529 773 285.0658 3198.414</code></pre>
+</div>
+</div>
+</section>
+<section id="marons-i-test" class="level3">
+<h3 class="anchored" data-anchor-id="marons-i-test">Maron’s I test</h3>
+<p><a href="https://r-spatial.github.io/spdep/reference/moran.test.html"><code>moran.test()</code></a> of <strong>spdep</strong> package is used to perform Moran’s I statistics testing which measures the spatial autocorrelation and how one region is similar to its neighbors by standardizing the spatial autocovariance by the variance of data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran.test</span>(nga_wp<span class="sc">$</span><span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span>, </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">listw=</span>rswm_q, </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">na.action=</span>na.omit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Moran I test under randomisation
+
+data:  nga_wp$`wp non-functional`  
+weights: rswm_q  n reduced by no-neighbour observations
+  
+
+Moran I statistic standard deviate = 20.07, p-value &lt; 2.2e-16
+alternative hypothesis: greater
+sample estimates:
+Moran I statistic       Expectation          Variance 
+     0.4345111969     -0.0012953368      0.0004715237 </code></pre>
+</div>
+</div>
+<p>The p-value for non-functional water points is statistically significant, therefore the spatial distribution is more spatially clustered than would be expected if underlying spatial processes were random.</p>
+<section id="computing-monte-carlo-morans-i" class="level4">
+<h4 class="anchored" data-anchor-id="computing-monte-carlo-morans-i">Computing Monte Carlo Moran’s I</h4>
+<p><a href="https://r-spatial.github.io/spdep/reference/moran.mc.html"><code>moran.mc()</code></a> of <strong>spdep</strong> package is used to perform permutation test for Moran’s I statistic. <em>nsim = 999</em> means 1000 simulations will be performed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>bperm<span class="ot">=</span> <span class="fu">moran.mc</span>(nga_wp<span class="sc">$</span><span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span>, </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">listw=</span>rswm_q, </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">nsim=</span><span class="dv">999</span>, </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">zero.policy =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">na.action=</span>na.omit)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>bperm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Moran I
+
+data:  nga_wp$`wp non-functional` 
+weights: rswm_q  
+number of simulations + 1: 1000 
+
+statistic = 0.43451, observed rank = 1000, p-value = 0.001
+alternative hypothesis: greater</code></pre>
+</div>
+</div>
+<p>The Moran’s I value is 0.43451, therefore we can reject the null hypothesis and conclude that positive spatial autocorrelation is occurring.</p>
+</section>
+<section id="visualizing-monte-carlo-morans-i" class="level4">
+<h4 class="anchored" data-anchor-id="visualizing-monte-carlo-morans-i">Visualizing Monte Carlo Moran’s I</h4>
+<p><a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/hist"><code>hist()</code></a> and <a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/abline"><code>abline()</code></a> of <strong>R Graphics</strong> are used to plot the distribution of statistical values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(bperm<span class="sc">$</span>res, </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">freq=</span><span class="cn">TRUE</span>, </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks=</span><span class="dv">20</span>, </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Simulated Moran's I"</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">0</span>, </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="st">"red"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex1_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="gearys-c-test" class="level3">
+<h3 class="anchored" data-anchor-id="gearys-c-test">Geary’s C test</h3>
+<p><a href="https://r-spatial.github.io/spdep/reference/geary.test.html"><code>geary.test()</code></a> of <strong>spdep</strong> package is used to perform Geary’s C test which measures spatial autocorrelation and determine whether adjacent similar observations are correlated by summing the square differences between pairs of data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geary.test</span>(nga_wp<span class="sc">$</span><span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span>,</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">listw=</span>rswm_q)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Geary C test under randomisation
+
+data:  nga_wp$`wp non-functional` 
+weights: rswm_q 
+
+Geary C statistic standard deviate = 14.479, p-value &lt; 2.2e-16
+alternative hypothesis: Expectation greater than statistic
+sample estimates:
+Geary C statistic       Expectation          Variance 
+     0.6166737225      1.0000000000      0.0007009361 </code></pre>
+</div>
+</div>
+<p>The Geary’s C test statistic is 0.6166737225 &lt; 1, therefore there is a positive spatial autocorrrelation and clustered.</p>
+<section id="computing-monte-carlo-gearys-c" class="level4">
+<h4 class="anchored" data-anchor-id="computing-monte-carlo-gearys-c">Computing Monte Carlo Geary’s C</h4>
+<p><a href="https://r-spatial.github.io/spdep/reference/geary.mc.html"><code>geary.mc()</code></a> of <strong>spdep</strong> package is used to perform permutation test for Geary’s C statistic. <em>nsim = 999</em> means 1000 simulations will be performed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>bperm<span class="ot">=</span><span class="fu">geary.mc</span>(nga_wp<span class="sc">$</span><span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span>, </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">listw=</span>rswm_q, </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">nsim=</span><span class="dv">999</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>bperm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Monte-Carlo simulation of Geary C
+
+data:  nga_wp$`wp non-functional` 
+weights: rswm_q 
+number of simulations + 1: 1000 
+
+statistic = 0.61667, observed rank = 1, p-value = 0.001
+alternative hypothesis: greater</code></pre>
+</div>
+</div>
+<p>The Monte Carlo Geary’s C test statistic shows same result as Geary’s C test result which is 0.61667 &lt; 1, therefore there is a positive spatial autocorrrelation and clustered.</p>
+</section>
+<section id="visualizing-monte-carlo-gearys-c" class="level4">
+<h4 class="anchored" data-anchor-id="visualizing-monte-carlo-gearys-c">Visualizing Monte Carlo Geary’s C</h4>
+<p><a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/hist"><code>hist()</code></a> and <a href="https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/abline"><code>abline()</code></a> of <strong>R Graphics</strong> are used to plot the distribution of statistical values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(bperm<span class="sc">$</span>res, </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">freq=</span><span class="cn">TRUE</span>, </span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">breaks=</span><span class="dv">20</span>, </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Simulated Geary's C"</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">1</span>, </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">col=</span><span class="st">"red"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex1_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="compute-morans-i-correlogram" class="level3">
+<h3 class="anchored" data-anchor-id="compute-morans-i-correlogram">Compute Moran’s I correlogram</h3>
+<p><a href="https://r-spatial.github.io/spdep/reference/sp.correlogram.html"><code>sp.correlogram()</code></a> of <strong>spdep</strong> package is used to compute a 5-lag spatial correlogram of non-functional water points. The global spatial autocorrelation is set to Moran’s I by <em>method = “I”</em>.</p>
+<p><code>plot()</code> of <strong>base Graph</strong> is used to plot the output.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>MI_corr <span class="ot">&lt;-</span> <span class="fu">sp.correlogram</span>(wm_q, </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                          nga_wp<span class="sc">$</span><span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span>, </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">order=</span><span class="dv">5</span>, </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">method=</span><span class="st">"I"</span>, </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">style=</span><span class="st">"W"</span>)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(MI_corr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex1_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(MI_corr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Spatial correlogram for nga_wp$`wp non-functional` 
+method: Moran's I
+           estimate expectation    variance standard deviate Pr(I) two sided
+1 (773)  4.3451e-01 -1.2953e-03  4.7152e-04          20.0698       &lt; 2.2e-16
+2 (773)  2.6672e-01 -1.2953e-03  2.0206e-04          18.8546       &lt; 2.2e-16
+3 (773)  1.9545e-01 -1.2953e-03  1.2189e-04          17.8208       &lt; 2.2e-16
+4 (773)  1.4034e-01 -1.2953e-03  8.7591e-05          15.1333       &lt; 2.2e-16
+5 (773)  6.4101e-02 -1.2953e-03  6.8780e-05           7.8854       3.136e-15
+           
+1 (773) ***
+2 (773) ***
+3 (773) ***
+4 (773) ***
+5 (773) ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="compute-gearys-c-correlogram" class="level3">
+<h3 class="anchored" data-anchor-id="compute-gearys-c-correlogram">Compute Geary’s C correlogram</h3>
+<p><a href="https://r-spatial.github.io/spdep/reference/sp.correlogram.html"><code>sp.correlogram()</code></a> of <strong>spdep</strong> package is used to compute a 5-lag spatial correlogram of non-functional water points. The global spatial autocorrelation is set to Geary’s C by <em>method = “C”</em>.</p>
+<p><code>plot()</code> of <strong>base Graph</strong> is used to plot the output.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>GC_corr <span class="ot">&lt;-</span> <span class="fu">sp.correlogram</span>(wm_q, </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                          nga_wp<span class="sc">$</span><span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span>, </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">order=</span><span class="dv">5</span>, </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">method=</span><span class="st">"C"</span>, </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">style=</span><span class="st">"W"</span>)</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(GC_corr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="Take-home_Ex1_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(GC_corr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Spatial correlogram for nga_wp$`wp non-functional` 
+method: Geary's C
+          estimate expectation   variance standard deviate Pr(I) two sided    
+1 (773) 0.61667372  1.00000000 0.00070094         -14.4787       &lt; 2.2e-16 ***
+2 (773) 0.74713982  1.00000000 0.00038527         -12.8824       &lt; 2.2e-16 ***
+3 (773) 0.80930633  1.00000000 0.00027289         -11.5437       &lt; 2.2e-16 ***
+4 (773) 0.86695944  1.00000000 0.00024425          -8.5127       &lt; 2.2e-16 ***
+5 (773) 0.94962924  1.00000000 0.00024046          -3.2483        0.001161 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+</section>
+<section id="computing-local-morans-i" class="level3">
+<h3 class="anchored" data-anchor-id="computing-local-morans-i">Computing local Moran’s I</h3>
+</section>
+</section>
+<section id="visualizing-the-hot-spot-area-of-water-points" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-the-hot-spot-area-of-water-points">Visualizing the Hot Spot Area of Water Points</h2>
 
 
 </section>
