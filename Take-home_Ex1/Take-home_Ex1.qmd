@@ -571,6 +571,8 @@ printCoefmat(data.frame(
 [`tmap_arrange()`](https://rdrr.io/cran/tmap/man/tmap_arrange.html) is used to create multiple stand-alone maps.
 
 ```{r}
+#| fig-width: 14
+#| fig-height: 12
 nga.localMI <- cbind(nga_wp,localMI) %>%
   rename(Pr.Ii = Pr.z....E.Ii..)
 
@@ -698,6 +700,8 @@ nga.gi <- cbind(nga_wp, as.matrix(gi.fixed)) %>%
 The code chunk below shows the functions used to map the Gi values derived using fixed distance weight matrix.
 
 ```{r}
+#| fig-width: 14
+#| fig-height: 12
 wp_nonfunctional <- qtm(nga_wp, "wp non-functional")
 
 Gimap <-tm_shape(nga.gi) +
@@ -724,6 +728,8 @@ nga.gi <- cbind(nga_wp, as.matrix(gi.adaptive)) %>%
 The code chunk below shows the functions used to map the Gi values derived using adaptive distance weight matrix.
 
 ```{r}
+#| fig-width: 14
+#| fig-height: 12
 wp_nonfunctional <- qtm(nga_wp, "wp non-functional")
 
 Gimap <-tm_shape(nga.gi) +
