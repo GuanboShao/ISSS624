@@ -63,19 +63,19 @@ wp <- st_read(dsn = "data/aspatial",
   filter(clean_coun == "Nigeria")
 ```
 
-~Reading\ layer\ \`geo_export'\ from\ data\ source~
+~Reading layer \`geo_export' from data source~
 
-~\`D:\\GuanboShao\\ISSS624\\Take-home_Ex1\\data\\aspatial'\ using\ driver\ \`ESRI\ Shapefile'~
+~\`D:\\GuanboShao\\ISSS624\\Take-home_Ex1\\data\\aspatial' using driver \`ESRI Shapefile'~
 
-~Simple\ feature\ collection\ with\ 362604\ features\ and\ 72\ fields~
+~Simple feature collection with 362604 features and 72 fields~
 
-~Geometry\ type:\ POINT~
+~Geometry type: POINT~
 
-~Dimension:\ \ \ \ \ XY~
+~Dimension:     XY~
 
-~Bounding\ box:\ \ xmin:\ -91.75435\ ymin:\ -27.31495\ xmax:\ 92.32694\ ymax:\ 26.65254~
+~Bounding box:  xmin: -91.75435 ymin: -27.31495 xmax: 92.32694 ymax: 26.65254~
 
-~Geodetic\ CRS:\ \ WGS84(DD)~
+~Geodetic CRS:  WGS84(DD)~
 
 From the output message, the simple feature data frame has 362604 features and 72 fields.
 
@@ -85,19 +85,19 @@ The code chunk below checks the CRS of *wp*.
 st_crs(wp)
 ```
 
-~Coordinate\ Reference\ System:~
+~Coordinate Reference System:~
 
-~User\ input:\ EPSG:26391~
+~User input: EPSG:26391~
 
 ~wkt:~
 
-~PROJCRS\["Minna\ /\ Nigeria\ West\ Belt",~
+~PROJCRS\["Minna / Nigeria West Belt",~
 
 ~BASEGEOGCRS\["Minna",~
 
 ~DATUM\["Minna",~
 
-~ELLIPSOID\["Clarke\ 1880\ (RGS)",6378249.145,293.465,~
+~ELLIPSOID\["Clarke 1880 (RGS)",6378249.145,293.465,~
 
 ~LENGTHUNIT\["metre",1\]\]\],~
 
@@ -107,37 +107,37 @@ st_crs(wp)
 
 ~ID\["EPSG",4263\]\],~
 
-~CONVERSION\["Nigeria\ West\ Belt",~
+~CONVERSION\["Nigeria West Belt",~
 
-~METHOD\["Transverse\ Mercator",~
+~METHOD\["Transverse Mercator",~
 
 ~ID\["EPSG",9807\]\],~
 
-~PARAMETER\["Latitude\ of\ natural\ origin",4,~
+~PARAMETER\["Latitude of natural origin",4,~
 
 ~ANGLEUNIT\["degree",0.0174532925199433\],~
 
 ~ID\["EPSG",8801\]\],~
 
-~PARAMETER\["Longitude\ of\ natural\ origin",4.5,~
+~PARAMETER\["Longitude of natural origin",4.5,~
 
 ~ANGLEUNIT\["degree",0.0174532925199433\],~
 
 ~ID\["EPSG",8802\]\],~
 
-~PARAMETER\["Scale\ factor\ at\ natural\ origin",0.99975,~
+~PARAMETER\["Scale factor at natural origin",0.99975,~
 
 ~SCALEUNIT\["unity",1\],~
 
 ~ID\["EPSG",8805\]\],~
 
-~PARAMETER\["False\ easting",230738.26,~
+~PARAMETER\["False easting",230738.26,~
 
 ~LENGTHUNIT\["metre",1\],~
 
 ~ID\["EPSG",8806\]\],~
 
-~PARAMETER\["False\ northing",0,~
+~PARAMETER\["False northing",0,~
 
 ~LENGTHUNIT\["metre",1\],~
 
@@ -159,9 +159,9 @@ st_crs(wp)
 
 ~USAGE\[~
 
-~SCOPE\["Engineering\ survey,\ topographic\ mapping."\],~
+~SCOPE\["Engineering survey, topographic mapping."\],~
 
-~AREA\["Nigeria\ -\ onshore\ west\ of\ 6°30'E,\ onshore\ and\ offshore\ shelf."\],~
+~AREA\["Nigeria - onshore west of 6°30'E, onshore and offshore shelf."\],~
 
 ~BBOX\[3.57,2.69,13.9,6.5\]\],~
 
@@ -525,4 +525,213 @@ print(GC_corr)
 
 ### Computing local Moran's I
 
+[`order()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/order) is used to sort data according to a specified variable.
+
+[`localmoran()`](https://r-spatial.github.io/spdep/reference/localmoran.html) of **spdep** package is used to compute *Ii* values, given a set of *zi* values and a listw object providing neighbor weighting information.
+
+```{r}
+fips <- order(nga_wp$shapeName)
+localMI <- localmoran(nga_wp$`wp non-functional`, rswm_q)
+head(localMI)
+```
+
+In the output above, the columns are:
+
+-   Ii: the local Moran's I statistics
+
+-   E.Ii: the expectation of local moran statistic under the randomisation hypothesis
+
+-   Var.Ii: the variance of local moran statistic under the randomisation hypothesis
+
+-   Z.Ii:the standard deviate of local moran statistic
+
+-   Pr(): the p-value of local moran statistic
+
+[`printCoefmat()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/printCoefmat) is used to list the content of the local Moran matrix.
+
+```{r}
+printCoefmat(data.frame(
+  localMI[fips,], 
+  row.names = nga_wp$ID[fips]),
+  check.names = FALSE)
+```
+
+### Mapping the local Moran's I values and p-values
+
+[`cbind()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cbind) of [**mice**](https://cran.r-project.org/web/packages/mice/mice.pdf) package is used to append the local Moran's I data frame *localMI* onto Nigeria SpatialPolygonDataFrame *nga_wp*. The output data frame is called *nga.localMI*.
+
+[`tm_shape()`](https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_shape) is used to define a spatial data object.
+
+[`tm_fill()`](https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_fill) is used to fill the polygons, a classification method is selected by *style* option.
+
+[`tm_layout()`](https://www.rdocumentation.org/packages/tmap/versions/3.3-3/topics/tm_layout) is used to customize the map layout, including title and legend.
+
+[`tm_borders()`](https://www.rdocumentation.org/packages/tmap/versions/0.7/topics/tm_borders) is used to define the borders of the polygons, *alpha* defines the transparency of line.
+
+[`tmap_arrange()`](https://rdrr.io/cran/tmap/man/tmap_arrange.html) is used to create multiple stand-alone maps.
+
+```{r}
+nga.localMI <- cbind(nga_wp,localMI) %>%
+  rename(Pr.Ii = Pr.z....E.Ii..)
+
+localMI.map <- tm_shape(nga.localMI) +
+  tm_fill(col = "Ii", 
+          style = "pretty") +
+  tm_layout(main.title = "local Moran's I statistics",
+            main.title.position = "center",
+            main.title.size = 1.5,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+
+pvalue.map <- tm_shape(nga.localMI) +
+  tm_fill(col = "Pr.Ii", 
+          breaks=c(-Inf, 0.001, 0.01, 0.05, 0.1, Inf),
+          palette="-Blues") +
+  tm_layout(main.title = "local Moran's I p-values",
+            main.title.position = "center",
+            main.title.size = 1.5,
+            legend.height = 0.45, 
+            legend.width = 0.35,
+            legend.outside = FALSE,
+            legend.position = c("right", "bottom"),
+            frame = FALSE) +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(localMI.map, pvalue.map, asp=1, ncol=2)
+```
+
 ## Visualizing the Hot Spot Area of Water Points
+
+The hot spot refers to a region that is higher relative to its surroundings. In this analysis, Getis and Ord's G-statistics is used to detect spatial anomalies, statistically significant hot-spots are recognised as areas of high values where other areas within a neighbourhood range also share high values too.
+
+### Deriving the centroid
+
+[`map_dbl()`](https://www.rdocumentation.org/packages/purrr/versions/0.3.5/topics/map) of [**purrr**](https://purrr.tidyverse.org/) package is used to return double vectors, which have numbers that can have decimals. The mapping function applies a given function to each element of a vector and returns a vector of the same length.
+
+[`st_centroid()`](https://r-spatial.github.io/sf/reference/geos_unary.html) of **sf** package is used to take polygons and return the point that is in the center of the geometry's envelope. The centroid point is halfway between the geometry's minimum and maximum x and y extents. To access longitude and latitude value, double bracket notation \[\[\]\] with 1 and 2 get the first and second value in *geometry* column of *nga_wp*.
+
+[`cbind()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/cbind) of [**mice**](https://cran.r-project.org/web/packages/mice/mice.pdf) package is used to append longitude and latitude together.
+
+```{r}
+longitude <- map_dbl(nga_wp$geometry, ~st_centroid(.x)[[1]])
+latitude <- map_dbl(nga_wp$geometry, ~st_centroid(.x)[[2]])
+coords <- cbind(longitude, latitude)
+```
+
+### Determining the cut-off distance
+
+Steps to determine upper limit for distance band:
+
+-   Return a matrix with the indices of points using [`knearneigh()`](https://r-spatial.github.io/spdep/reference/knearneigh.html).
+
+-   Convert the knn object into a neighbors list of class nb with a list of integer vectors using [`knn2nb()`](https://r-spatial.github.io/spdep/reference/knn2nb.html).
+
+-   Return the length of neighbor relationship edges using [`nbdists()`](https://r-spatial.github.io/spdep/reference/nbdists.html).
+
+-   Remove the list structure using [`unlist()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/unlist).
+
+```{r}
+k1 <- knn2nb(knearneigh(coords))
+k1dists <- unlist(nbdists(k1, coords, longlat = FALSE))
+summary(k1dists)
+```
+
+The output shows the largest first nearest neighbor distance is 72139, so this is the upper threshold.
+
+### Computing fixed distance weight matrix
+
+[`dnearneigh()`](https://r-spatial.github.io/spdep/reference/dnearneigh.html) of **spdep** package is used to compute the distance weight matrix. For fixed distance weight matrix, more densely settled areas (usually the urban areas) tend to have more neighbors and the less densely settled areas (usually the rural areas) tend to have less neighbors.
+
+[`nb2listw()`](https://www.rdocumentation.org/packages/spdep/versions/1.2-7/topics/nb2listw) of **spdep** package is used to assign spatial weights to each polygon in neighbors list.
+
+The output spatial weights object is called *wm72139_lw*. There are 5 regions with only 1 neighbor, and the region with most neighbors has 70 neighbors.
+
+```{r}
+wm_d72139 <- dnearneigh(coords, 0, 72139, longlat = FALSE)
+wm72139_lw <- nb2listw(wm_d72139, style = 'B')
+summary(wm72139_lw)
+```
+
+### Computing adaptive distance weight matrix
+
+For adaptive distance weight matrix, k-nearest neighbors is used to control the number of neighbors.
+
+[`knearneigh()`](https://r-spatial.github.io/spdep/reference/knearneigh.html) of **spdep** package is used to return a matrix with the indices of points belonging to the set of the k nearest neighbors of each other.
+
+[`nb2listw()`](https://www.rdocumentation.org/packages/spdep/versions/1.2-7/topics/nb2listw) of **spdep** package is used to assign spatial weights to each polygon in neighbors list.
+
+```{r}
+knn <- knn2nb(knearneigh(coords, k=71))
+knn
+```
+
+```{r}
+knn_lw <- nb2listw(knn, style = 'B')
+summary(knn_lw)
+```
+
+### Computing Gi statistics with fixed distance weights
+
+`localG()` is used to return vector of G or Gstar values.
+
+The Gi statistics called *gi.fixed* is represented as a Z-score. Greater values represent a greater intensity of clustering and the direction (positive or negative) indicates high or low clusters.
+
+`as.matrix()` is used to convert output vector into r matrix object.
+
+`cbind()` is used to join *nga_wp* data and *gi.fixed* matrix to produce a spatial polygon data frame called *nga.gi*.
+
+`rename()` is used to change the field name of Gi values to *gstat_fixed*.
+
+```{r}
+fips <- order(nga_wp$shapeName)
+gi.fixed <- localG(nga_wp$`wp non-functional`, wm72139_lw)
+nga.gi <- cbind(nga_wp, as.matrix(gi.fixed)) %>%
+  rename(gstat_fixed = as.matrix.gi.fixed.)
+```
+
+### Mapping Gi values with fixed distance weights
+
+The code chunk below shows the functions used to map the Gi values derived using fixed distance weight matrix.
+
+```{r}
+wp_nonfunctional <- qtm(nga_wp, "wp non-functional")
+
+Gimap <-tm_shape(nga.gi) +
+  tm_fill(col = "gstat_fixed", 
+          style = "pretty",
+          palette="-RdBu",
+          title = "local Gi") +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(wp_nonfunctional, Gimap, asp=1, ncol=2)
+```
+
+### Computing Gi statistics with adaptive distance weights
+
+```{r}
+fips <- order(nga_wp$shapeName)
+gi.adaptive <- localG(nga_wp$`wp non-functional`, knn_lw)
+nga.gi <- cbind(nga_wp, as.matrix(gi.adaptive)) %>%
+  rename(gstat_adaptive = as.matrix.gi.adaptive.)
+```
+
+### Mapping Gi values with adaptive distance weights
+
+The code chunk below shows the functions used to map the Gi values derived using adaptive distance weight matrix.
+
+```{r}
+wp_nonfunctional <- qtm(nga_wp, "wp non-functional")
+
+Gimap <-tm_shape(nga.gi) +
+  tm_fill(col = "gstat_adaptive", 
+          style = "pretty",
+          palette="-RdBu",
+          title = "local Gi") +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(wp_nonfunctional, Gimap, asp=1, ncol=2)
+```
