@@ -58,7 +58,7 @@ mpsz = st_read(dsn = "data/geospatial",
 
 The code chunk below updates *mpsz* with correct ESPG code.
 
-[`st_transform()`](https://r-spatial.github.io/sf/reference/st_transform.html) of **sf** package is used to transform original geographic coordinate reference system (CRS) *WGS84* to *EPSG: 3414*.
+[`st_transform()`](https://r-spatial.github.io/sf/reference/st_transform.html) of **sf** package is used to transform original geographic coordinate reference system (CRS) *svy21* to *EPSG: 3414*.
 
 `st_crs()` of **sf** package is used to verify the projection of *mpsz_svy21*.
 
@@ -370,7 +370,7 @@ condo_resale.res.sf <- cbind(condo_resale.sf,
 rename(`MLR_RES` = `condo.mlr1.residuals`)
 ```
 
-The code chunk below converts condo_resale.res.sf from simple feature object into a spatial points data frame because spdep package can only process sp conformed spatial data objects.
+The code chunk below converts *condo_resale.res.sf* from simple feature object into a spatial points data frame because **spdep** package can only process sp conformed spatial data objects.
 
 ```{r}
 condo_resale.sp <- as_Spatial(condo_resale.res.sf)
@@ -420,7 +420,7 @@ The code chunk below uses `lm.morantest()` of **spdep** package to perform Moran
 lm.morantest(condo.mlr1, nb_lw)
 ```
 
-The Global Moran\'s I test for residual spatial autocorrelation shows that it\'s p-value is less than the alpha value of 0.05. Hence, we will reject the null hypothesis that the residuals are randomly distributed.
+The Global Moran's I test for residual spatial autocorrelation shows that it's p-value is less than the alpha value of 0.05. Hence, we will reject the null hypothesis that the residuals are randomly distributed.
 
 Since the Observed Global Moran I = 0.1424418 which is greater than 0, we can infer that the residuals resemble cluster distribution.
 
@@ -447,7 +447,7 @@ bw.fixed <- bw.gwr(formula = SELLING_PRICE ~ AREA_SQM + AGE + PROX_CBD +
                    longlat=FALSE)
 ```
 
-The result shows that the recommended bandwidth is 971.3398 meters.
+The result shows that the recommended bandwidth is 971.3405 meters.
 
 #### GWModel method using fixed bandwidth
 
