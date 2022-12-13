@@ -1,0 +1,292 @@
+---
+title: "Take-home Exercise 2: Regionalisation of Multivariate Water Point Attributes with Non-spatially Constrained and Spatially Constrained Clustering Methods"
+execute: 
+  warning: false
+format: html
+editor: visual
+---
+
+## Overview
+
+In this take-home exercise, I will be regionalising Nigeria by using several measures. Regionalisation is to group observations which are similar in their statistical attributes and spatial location. The measures that are included in regionalisation are:
+
+-   Total number of functional water points
+
+-   Total number of nonfunctional water points
+
+-   Percentage of functional water points
+
+-   Percentage of non-functional water points
+
+-   Percentage of main water point technology (i.e. Hand Pump)
+
+-   Percentage of usage capacity (i.e. \< 1000, \>=1000)
+
+-   Percentage of rural water points
+
+## The Data
+
+### Aspatial data
+
+The aspatial data includes the water point data that can be downloaded from [WPdx+ Global Data Repository](https://data.waterpointdata.org/dataset/Water-Point-Data-Exchange-Plus-WPdx-/eqje-vguj/data). For this analysis, Shapefile data format is downloaded. The shapefile includes global water point data, the Nigeria water point data which will be used in our analysis is filtered in data importing section. The files' names are renamed to "geo_export" for easier use.
+
+### Geospatial data
+
+The geospatial data includes the Nigeria Level-2 Administratie Boundary (which is also known as Local Government Data LGA) polygon features GIS data which can be downloaded from [geoBoundaries](https://www.geoboundaries.org/). In "*Download geoBoundaries*" section, key in "Nigeria" to *Name*, and download the *ADM2 2020* data file. The files with name "geoBoundaries-NGA-ADM2" are used.
+
+## Getting Started
+
+In this exercise, the following R packages will be used:
+
+-   [**sf**](https://r-spatial.github.io/sf/) for importing, managing, and processing geospatial data
+
+-   [**spdep**](https://cran.r-project.org/web/packages/spdep/spdep.pdf) for computing spatial weights, global and local spatial autocorrelation statistics
+
+-   [**funModeling**](https://cran.r-project.org/web/packages/funModeling/vignettes/funModeling_quickstart.html) for Exploratory Data Analysis (EDA)
+
+-   [**rgdal**](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjlu57Cgtv7AhVVSmwGHcpuCHsQFnoECBEQAQ&url=https%3A%2F%2Fcran.r-project.org%2Fpackage%3Drgdal&usg=AOvVaw0HmVZ05p3MPzWi8G7OW4tH) for providing bindings to the 'Geospatial' Data Abstraction Library (GDAL) and access to projection operation from the 'PROJ' library.
+
+-   [**tidyverse**](https://www.tidyverse.org/packages/) for importing, wrangling, and visualizing data
+
+    -   [**tidyr**](https://tidyr.tidyverse.org/) for manipulating data
+
+    -   [**dplyr**](https://dplyr.tidyverse.org/) for transforming data
+
+    -   [**ggplot2**](https://ggplot2.tidyverse.org/) for visualizing data
+
+-   [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) for plotting cartographic quality choropleth map
+
+-   [**corrplot**](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) for providing a visual exploratory tool on correlation matrix that supports automatic variable reordering to help detect hidden patterns among variables
+
+-   [**ggpubr**](https://www.rdocumentation.org/packages/ggpubr/versions/0.1.1) for providing some easy-to-use functions for creating and customizing **ggplot2**
+
+-   [**heatmaply**](https://www.rdocumentation.org/packages/heatmaply/versions/1.4.0/topics/heatmaply) for visualizing high-dimensional data, in which a table of numbers are encoded as a grid of colored cells
+
+-   [**cluster**](https://cran.r-project.org/web/packages/cluster/index.html) and [**ClustGeo**](https://cran.r-project.org/web/packages/ClustGeo/index.html) for cluster analysis
+
+The code chunk below installs and launch the R packages into R environment.
+
+```{r}
+pacman::p_load(rgdal, spdep, tmap, sf, ClustGeo, funModeling,
+               ggpubr, cluster, factoextra, NbClust,
+               heatmaply, corrplot, psych, tidyverse, GGally)
+```
+
+## Data Preparation
+
+### Importing geospatial data into R environment
+
+The code chunk below uses [`st_read()`](https://cran.r-project.org/web/packages/sf/vignettes/sf2.html) of **sf** package to import Nigeria Boundary GIS data shapefile *geoBoundaries-NGA-ADM2* into R and save as simple feature data frame called *nga*.
+
+[`st_transform()`](https://r-spatial.github.io/sf/reference/st_transform.html) of **sf** package is used to transform original geographic coordinate reference system (CRS) *WGS84* to *EPSG:26391 Minna/Nigeria West Belt*, which is more appropriate for our analysis.
+
+```{r eval=FALSE}
+nga <- st_read(dsn = "data/geospatial",
+               layer = "geoBoundaries-NGA-ADM2") %>%
+  st_transform(crs = 26391)
+```
+
+The code chunk below views the content of *nga* simple features data frame.
+
+```{r eval=FALSE}
+nga
+```
+
+The code chunk below uses `glimpse()` to reveal the data type of fields.
+
+```{r eval=FALSE}
+glimpse(nga)
+```
+
+### Importing water point shapefile into R environment
+
+The code chunk below uses [`st_read()`](https://cran.r-project.org/web/packages/sf/vignettes/sf2.html) of **sf** package to import water point data *geo_export* shapefile into R and save as simple feature data frame called *wp*.
+
+[`st_transform()`](https://r-spatial.github.io/sf/reference/st_transform.html) of **sf** package is used to transform original geographic coordinate reference system (CRS) *WGS84* to *EPSG:26391 Minna/Nigeria West Belt*, which is more appropriate for our analysis.
+
+[`filter()`](https://dplyr.tidyverse.org/reference/filter.html) of **dplyr** package is used to extract water point records of Nigeria.
+
+```{r eval=FALSE}
+wp <- st_read(dsn = "data/aspatial",
+              layer = "geo_export") %>%
+  st_transform(crs = 26391) %>%
+  filter(clean_coun == "Nigeria")
+```
+
+The code chunk below uses [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) of **readr** package to save the extracted sf data table *wp* into rds data format file called *wp_nga* and is saved in *data* folder.
+
+```{r eval=FALSE}
+wp_nga <- write_rds(wp, "data/wp_nga.rds")
+```
+
+## Data Wrangling
+
+### Recording NA values into string
+
+The code chunk below uses [`replace_na()`](https://tidyr.tidyverse.org/reference/replace_na.html) to recode:
+
+-   All NA values in *status_cle* field into *Unknown*
+
+-   All NA values in *water_te_2* field into *Unknown*
+
+[`mutate()`](https://dplyr.tidyverse.org/reference/mutate.html) of **dplyr** package is used to derive new variables called *Unknown*.
+
+```{r eval=FALSE}
+wp_nga <- read_rds("data/wp_nga.rds") %>%
+  mutate(status_cle = replace_na(status_cle, "Unknown")) %>%
+  mutate(water_te_2 = replace_na(water_te_2, "Unknown"))
+```
+
+### EDA
+
+The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of water points status *status_cle* field in *wp_nga*.
+
+```{r eval=FALSE}
+freq(data = wp_nga,
+     input = 'status_cle')
+```
+
+![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-8-1.png)
+
+According to the distribution diagram of each status, the proportion of functional water points includes *Functional*, *Functional but not in use*, and *Functional but needs repair*, which is **54.88%** in total. The proportion of non-functional water points includes *Non-Functional*, *Non-Functional due to dry season*, *Abandoned/Decommissioned*, *Abandoned*, and *Non functional due to dry season* which is **33.9%** in total.
+
+The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of water point technology *water_te_2* field in *wp_nga*.
+
+```{r eval=FALSE}
+freq(data = wp_nga,
+     input = 'water_te_2')
+```
+
+![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-9-1.png)
+
+The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of usage capacity *usage_cap* field in *wp_nga*.
+
+```{r eval=FALSE}
+freq(data = wp_nga,
+     input = 'usage_cap')
+```
+
+![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-10-1.png)
+
+The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of urban/rural water points *is_urban* field in *wp_nga*.
+
+```{r eval=FALSE}
+freq(data = wp_nga,
+     input = 'is_urban')
+```
+
+![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-11-1.png)
+
+## Extracting Water Point Data
+
+In this section, I will use `filter()` to extract water point records by using classes in *status_cle, water_te_2, usage_cap, is_rural* field.
+
+### Extracting functional water points
+
+The code chunk below uses `filter()` to select functional water points from *wp_nga* and name as *wp_functional*.
+
+```{r eval=FALSE}
+wp_functional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Functional",
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+### Extracting non-functional water points
+
+The code chunk below uses `filter()` to select non-functional water points from *wp_nga* and name as *wp_nonfunctional*.
+
+```{r eval=FALSE}
+wp_nonfunctional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Non-Functional",
+             "Non-Functional due to dry season",
+             "Abandoned/Decommissioned",
+             "Abandoned",
+             "Non functional due to dry season"))
+```
+
+### Extracting water points with Hand Pump technology
+
+The code chunk below uses `filter()` to select Hand Pump water points from *wp_nga* and name as *wp_handpump*.
+
+```{r eval=FALSE}
+wp_handpump <- wp_nga %>%
+  filter(water_te_2 %in%
+           c("Hand Pump"))
+```
+
+### Extracting water points with Usage Capacity \<1000
+
+The code chunk below uses `filter()` to select water points with usage capacity \< 1000 from *wp_nga* and name as *wp_lowcap*.
+
+```{r eval=FALSE}
+wp_lowcap <- filter(wp_nga, usage_cap != 1000)
+```
+
+### Extracting water points with Usage Capacity \>=1000
+
+The code chunk below uses `filter()` to select water points with usage capacity \>= 1000 from *wp_nga* and name as *wp_highcap*.
+
+```{r eval=FALSE}
+wp_highcap <- filter(wp_nga, usage_cap == 1000)
+```
+
+### Extracting water points in rural area
+
+The code chunk below uses `filter()` to select Hand Pump water points from *wp_nga* and name as *wp_handpump*.
+
+```{r eval=FALSE}
+wp_rural <- wp_nga %>%
+  filter(is_urban %in%
+           c("False"))
+```
+
+## Performing Point-in-Polygon Count
+
+In this section, [`st_intersects()`](https://r-spatial.github.io/sf/reference/geos_binary_pred.html) of **sf** package to identify the water points located in each region of Nigeria, [`length()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/length) of **Base R** is used to calculate the number of water points in each region.
+
+[`mutate()`](https://dplyr.tidyverse.org/reference/mutate.html) of **dplyr** package is used to derive new variables namely *total wp*, *wp functional*, *wp non-functional*, *wp handpump, wp lowcap, wp highcap, wp rural*.
+
+```{r eval=FALSE}
+nga_wp <- nga %>% 
+  mutate(`total wp` = lengths(st_intersects(nga, wp_nga))) %>%
+  mutate(`wp functional` = lengths(st_intersects(nga, wp_functional))) %>%
+  mutate(`wp non-functional` = lengths(st_intersects(nga, wp_nonfunctional))) %>%
+  mutate(`wp handpump` = lengths(st_intersects(nga, wp_handpump))) %>%
+  mutate(`wp lowcap` = lengths(st_intersects(nga, wp_lowcap))) %>%
+  mutate(`wp highcap` = lengths(st_intersects(nga, wp_highcap))) %>%
+  mutate(`wp rural` = lengths(st_intersects(nga, wp_rural)))
+```
+
+## Saving the Analytical Data Table
+
+The code chunk below uses `mutate()` to derive 2 fields namely *pct_functional*, *pct_non-functional*, *pct_handpump, pct_lowcap, pct_highcap, pct_rural* which are the percentage of functional water points, non-functional water points, hand pump water points, usage capacity \< 1000 water points, usage capacity \>= 1000 water points and rural area water points in each region.
+
+`replace_na()` is used to recode all NaN values which are caused by 0 in *total wp* field into 0.
+
+```{r eval=FALSE}
+nga_wp <- nga_wp %>%
+  mutate(`pct_functional` = replace_na((`wp functional`/`total wp`),0)) %>%
+  mutate(`pct_non-functional` = replace_na((`wp non-functional`/`total wp`),0)) %>%
+  mutate(`pct_handpump` = replace_na((`wp handpump`/`total wp`),0)) %>%
+  mutate(`pct_lowcap` = replace_na((`wp lowcap`/`total wp`),0)) %>%
+  mutate(`pct_highcap` = replace_na((`wp highcap`/`total wp`),0)) %>%
+  mutate(`pct_rural` = replace_na((`wp rural`/`total wp`),0))
+```
+
+The code chunk below uses [`write_rds()`](https://readr.tidyverse.org/reference/read_rds.html) of **readr** package to save the extracted sf data table nga\_*wp* into rds data format file called *wp_nga* and is saved in *data* folder.
+
+```{r eval=FALSE}
+write_rds(nga_wp, "data/wp_nga.rds")
+```
+
+Upon completing the above sections, we achieve an rds data format file called *wp_nga* which has a file size of 2.1MB. This allows us to keep a small size data file and delete raw data files which occupy space of several gigabytes. In the following section, *wp_nga.rds* will be used for analysis. A RMarkdown code [`{r eval=FALSE}`](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) is used to skip evaluating previous code chunks and exclude their results so that the *wp_nga.rds* file will not be modified. If need to reproduce the previous sections, please change `{r eval=FALSE}` to `{r}` then proceed to run the code chunks.
+
+The code chunk below uses read_rds() to load rds file *wp_nga* for the analysis.
+
+```{r}
+nga_wp <- read_rds("data/wp_nga.rds")
+summary(nga_wp)
+```
