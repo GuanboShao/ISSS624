@@ -247,7 +247,7 @@ wp_highcap <- filter(wp_nga, usage_cap == 1000)
 
 ### Extracting water points in rural area
 
-The code chunk below uses `filter()` to select Hand Pump water points from *wp_nga* and name as *wp_handpump*.
+The code chunk below uses `filter()` to select rural water points from *wp_nga* and name as *wp_rural*.
 
 ```{r eval=FALSE}
 wp_rural <- wp_nga %>%
@@ -275,9 +275,9 @@ nga_wp <- nga %>%
 
 ## Saving the Analytical Data Table
 
-The code chunk below uses `mutate()` to derive 2 fields namely *pct_functional*, *pct_non-functional*, *pct_handpump, pct_lowcap, pct_highcap, pct_rural* which are the percentage of functional water points, non-functional water points, hand pump water points, usage capacity \< 1000 water points, usage capacity \>= 1000 water points and rural area water points in each region.
+The code chunk below uses `mutate()` to derive new fields namely *pct_functional*, *pct_non-functional*, *pct_handpump, pct_lowcap, pct_highcap, pct_rural* which are the percentage of functional water points, non-functional water points, hand pump water points, usage capacity \< 1000 water points, usage capacity \>= 1000 water points and rural area water points in each region.
 
-`replace_na()` is used to recode all NaN values which are caused by 0 in *total wp* field into 0.
+`replace_na()` is used to recode all NaN values which are caused by 0's in *total wp* field into 0.
 
 ```{r eval=FALSE}
 nga_wp <- nga_wp %>%
@@ -298,7 +298,7 @@ write_rds(nga_wp, "data/wp_nga.rds")
 
 Upon completing the above sections, we achieve an rds data format file called *wp_nga* which has a file size of 2.1MB. This allows us to keep a small size data file and delete raw data files which occupy space of several gigabytes. In the following section, *wp_nga.rds* will be used for analysis. A RMarkdown code [`{r eval=FALSE}`](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) is used to skip evaluating previous code chunks and exclude their results so that the *wp_nga.rds* file will not be modified. If need to reproduce the previous sections, please change `{r eval=FALSE}` to `{r}` then proceed to run the code chunks.
 
-The code chunk below uses read_rds() to load rds file *wp_nga* for the analysis.
+The code chunk below uses `read_rds()` to load rds file *wp_nga* for the analysis.
 
 ```{r}
 nga_wp <- read_rds("data/wp_nga.rds")
@@ -365,7 +365,7 @@ ggarrange(functional, nonfunctional, handpump, mechpump, lowcap, highcap, rural,
 
 ### Preparing a choropleth map
 
-The code chunk below uses [`qtm()`](https://search.r-project.org/CRAN/refmans/tmap/html/qtm.html) of **tmap** package to plot a choropleth map showing the distribution of percentage of functional water points of Nigeria ar LGA level.
+The code chunk below uses [`qtm()`](https://search.r-project.org/CRAN/refmans/tmap/html/qtm.html) of **tmap** package to plot a choropleth map showing the distribution of percentage of water points with hand pumps in Nigeria at LGA level.
 
 ```{r eval=FALSE}
 qtm(nga_wp, "pct_handpump")
@@ -373,7 +373,7 @@ qtm(nga_wp, "pct_handpump")
 
 ![](images/paste-547D1EC6.png)
 
-The code chunk below plots two choropleth maps, one for the total number of water points and one for the total number of water points with handpump.
+The code chunk below plots two choropleth maps, one for the total number of water points and one for the total number of water points with hand pumps.
 
 ```{r eval=FALSE}
 TT_WATERPOINTS.map <- tm_shape(nga_wp) + 
@@ -396,9 +396,9 @@ tmap_arrange(TT_WATERPOINTS.map, HANDPUMP.map,
 
 ![](images/paste-EF0905D7.png)
 
-The choropleth maps above show that regions with relatively more water points are having relatively more handpumps.
+The choropleth maps above show that regions with relatively more water points are having relatively more hand pumps.
 
-The code chunk below plots the choropleth maps showing the dsitribution of total number of water points and percentage of handpump.
+The code chunk below plots the choropleth maps showing the distribution of total number of water points and percentage of hand pumps.
 
 ```{r eval=FALSE}
 tm_shape(nga_wp) +
@@ -411,11 +411,11 @@ tm_shape(nga_wp) +
 
 ![](images/paste-4B55D28E.png)
 
-Comparing the choropleth map of number of handpump and percentage of handpump, we can tell that hand pump is the major technology used in most regions, regardless of having more or less water points.
+Comparing the choropleth map of number of hand pumps and percentage of hand pumps, we can tell that hand pump is the major technology used in most regions, regardless of having more or less water points.
 
 ## Correlation Analysis
 
-The code chunk below uses [`corrplot.mixed()`](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf)of [**corrplot**](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) package to visualise and analyse the correlation of the input variables.
+The code chunk below uses [`corrplot.mixed()`](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf)of [**corrplot**](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) package to visualize and analyse the correlation of the input variables.
 
 ```{r eval=FALSE}
 cluster_vars <- nga_wp %>%
@@ -435,11 +435,11 @@ The correlation plot above shows that *pct_handpump* and *pct_lowcap* are highly
 
 ## Hierarchy Cluster Analysis
 
-In this section, I will perform hierarchical cluster analysis.
-
 ### Extracting clustering variables
 
 The code chunk below extracts the clustering variables from *nga_wp*.
+
+`paste()` is used to merge *shapeName* and *shapeID* in order to avoid duplicates in *shapeName*.
 
 ```{r}
 nga_wp$shapeNameID <- paste(nga_wp$shapeName, nga_wp$shapeID)
@@ -449,7 +449,7 @@ cluster_vars <- nga_wp %>%
 head(cluster_vars,10)
 ```
 
-The code chunk below uses [`row.names()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/row.names.html) to change the rows by township name instead of row number.
+The code chunk below uses [`row.names()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/row.names.html) to change the rows by region name instead of row number.
 
 ```{r}
 row.names(cluster_vars) <- cluster_vars$"shapeNameID"
@@ -748,7 +748,7 @@ heatmaply(normalize(nga_wp_vars_mat),
 
 ### Mapping the clusters formed
 
-The code chunk below uses `cutree()` of **R Base** to derive a 3-cluster model after examining the dendragram above.
+The code chunk below uses [`cutree()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/cutree) of **R Base** to derive a 3-cluster model after examining the dendragram above.
 
 ```{r}
 groups <- as.factor(cutree(hclust_ward, k=3))
@@ -779,7 +779,7 @@ The code chunk below uses [`as_Spatial()`](https://r-spatial.github.io/sf/refere
 nga_wp_sp <- as_Spatial(nga_wp[-86,])
 ```
 
-The code chunk below uses [`poly2nd()`](https://r-spatial.github.io/spdep/reference/poly2nb.html) of **spdep** package to compute the neighbours list from polygon list.
+The code chunk below uses [`poly2nd()`](https://r-spatial.github.io/spdep/reference/poly2nb.html) of **spdep** package to compute the neighbors list from polygon list.
 
 ```{r}
 nga_wp.nb <- poly2nb(nga_wp_sp)
@@ -806,7 +806,7 @@ The code chunk below uses[`nbcosts()`](https://r-spatial.github.io/spdep/referen
 lcosts <- nbcosts(nga_wp.nb, nga_wp_vars)
 ```
 
-The code chunk below uses [`nb2listw()`](https://r-spatial.github.io/spdep/reference/nb2listw.html) of **spdep** package to convert the neighbour list to a list weights object by specifying the *lcosts* computed above as the weights. "style" argument is set as "B" to make sure the cost values are not row-standardized.
+The code chunk below uses [`nb2listw()`](https://r-spatial.github.io/spdep/reference/nb2listw.html) of **spdep** package to convert the neighbor list to a list weights object by specifying the *lcosts* computed above as the weights. "style" argument is set as "B" to make sure the cost values are not row-standardized.
 
 ```{r}
 nga_wp.w <- nb2listw(nga_wp.nb, 
@@ -860,16 +860,16 @@ The code chunk below checks the cluster assignment.
 
 ```{r}
 ccs3 <- clust3$groups
-ccs3
 table(ccs3)
 ```
 
+The code chunk below plots the pruned trees that shows the 3 clusters on Nigeria regions.
+
 ```{r}
-plot(nga_wp_sp, border=gray(.5))
 plot(clust3, 
      coordinates(nga_wp_sp), 
      cex.lab=.7,
-     groups.colors=c("red","green"),
+     groups.colors=c("red","green","blue"),
      cex.circles=0.005)
 ```
 
@@ -900,7 +900,7 @@ In this section, I will use **ClustGeo** package to perform non-spatially constr
 
 ### Ward-like hierarchical clustering: ClustGeo
 
-The code chunk below uses `hclustgeo()` of **ClustGeo** package to perform a typical Ward-like hierarchical clustering.
+The code chunk below uses [`hclustgeo()`](https://www.rdocumentation.org/packages/ClustGeo/versions/2.1/topics/hclustgeo) of **ClustGeo** package to perform a typical Ward-like hierarchical clustering.
 
 ```{r}
 nongeo_cluster <- hclustgeo(proxmat)
@@ -931,14 +931,14 @@ qtm(nga_wp_ngeo_cluster, "CLUSTER")
 
 The code chunk below uses [`st_distance()`](https://r-spatial.github.io/sf/reference/geos_measures.html) of **sf** package to derive a spatial distance matrix.
 
-`as.dist()` is used to convert data frame into matrix.
+[`as.dist()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/dist) is used to convert data frame into matrix.
 
 ```{r}
 dist <- st_distance(nga_wp, nga_wp)
 distmat <- as.dist(dist)
 ```
 
-The code chunk below uses `choicealpha()` is used to determine a suitable value for the mixing parameter alpha.
+The code chunk below uses [`choicealpha()`](https://search.r-project.org/CRAN/refmans/ClustGeo/html/choicealpha.html) is used to determine a suitable value for the mixing parameter *alpha*.
 
 ```{r}
 cr <- choicealpha(proxmat, distmat,
@@ -950,9 +950,9 @@ The black color line refers to attribute space, the red color line refers to geo
 
 At value 0 we don't look at spatial homogeneity, at value 1 we only care about spatial homogeneity.
 
-Based on the graphs above, in `hclustgeo()` alpha is set to 0.3.
+Based on the graphs above, in [`hclustgeo()`](https://www.rdocumentation.org/packages/ClustGeo/versions/2.1/topics/hclustgeo) *alpha* is set to 0.3.
 
-`cutree()` is used to derive the cluster object.
+[`cutree()`](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/cutree) is used to derive the cluster object.
 
 `cbind()` is used to join back the group list with *nga_wp* polygon feature data frame.
 
