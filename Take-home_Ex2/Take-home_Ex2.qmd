@@ -18,9 +18,11 @@ In this take-home exercise, I will be regionalising Nigeria by using several mea
 
 -   Percentage of non-functional water points
 
--   Percentage of main water point technology (i.e. Hand Pump)
+-   Percentage of Hand Pump water point
 
--   Percentage of usage capacity (i.e. \< 1000, \>=1000)
+-   Percentage of Mechanized Pump water point
+
+-   Percentage of usage capacity
 
 -   Percentage of rural water points
 
@@ -137,7 +139,7 @@ wp_nga <- read_rds("data/wp_nga.rds") %>%
   mutate(water_te_2 = replace_na(water_te_2, "Unknown"))
 ```
 
-### EDA
+### Check the distribution of classes in selected fields
 
 The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of water points status *status_cle* field in *wp_nga*.
 
@@ -146,7 +148,7 @@ freq(data = wp_nga,
      input = 'status_cle')
 ```
 
-![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-8-1.png)
+![](images/paste-DA60799B.png)
 
 According to the distribution diagram of each status, the proportion of functional water points includes *Functional*, *Functional but not in use*, and *Functional but needs repair*, which is **54.88%** in total. The proportion of non-functional water points includes *Non-Functional*, *Non-Functional due to dry season*, *Abandoned/Decommissioned*, *Abandoned*, and *Non functional due to dry season* which is **33.9%** in total.
 
@@ -157,7 +159,7 @@ freq(data = wp_nga,
      input = 'water_te_2')
 ```
 
-![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-9-1.png)
+![](images/paste-61AF1412.png)
 
 The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of usage capacity *usage_cap* field in *wp_nga*.
 
@@ -166,7 +168,7 @@ freq(data = wp_nga,
      input = 'usage_cap')
 ```
 
-![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-10-1.png)
+![](images/paste-BD549143.png)
 
 The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to display the distribution of urban/rural water points *is_urban* field in *wp_nga*.
 
@@ -175,7 +177,7 @@ freq(data = wp_nga,
      input = 'is_urban')
 ```
 
-![](/_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-11-1.png)
+![](images/paste-0AE8771C.png)
 
 ## Extracting Water Point Data
 
@@ -207,7 +209,7 @@ wp_nonfunctional <- wp_nga %>%
              "Non functional due to dry season"))
 ```
 
-### Extracting water points with Hand Pump technology
+### Extracting water points with Hand Pump
 
 The code chunk below uses `filter()` to select Hand Pump water points from *wp_nga* and name as *wp_handpump*.
 
@@ -215,6 +217,16 @@ The code chunk below uses `filter()` to select Hand Pump water points from *wp_n
 wp_handpump <- wp_nga %>%
   filter(water_te_2 %in%
            c("Hand Pump"))
+```
+
+### Extracting water points with Mechanized Pump
+
+The code chunk below uses `filter()` to select Mechanized Pump water points from *wp_nga* and name as *wp_mechpump*.
+
+```{r eval=FALSE}
+wp_mechpump <- wp_nga %>%
+  filter(water_te_2 %in%
+           c("Mechanized Pump"))
 ```
 
 ### Extracting water points with Usage Capacity \<1000
@@ -255,6 +267,7 @@ nga_wp <- nga %>%
   mutate(`wp functional` = lengths(st_intersects(nga, wp_functional))) %>%
   mutate(`wp non-functional` = lengths(st_intersects(nga, wp_nonfunctional))) %>%
   mutate(`wp handpump` = lengths(st_intersects(nga, wp_handpump))) %>%
+  mutate(`wp mechpump` = lengths(st_intersects(nga, wp_mechpump))) %>%
   mutate(`wp lowcap` = lengths(st_intersects(nga, wp_lowcap))) %>%
   mutate(`wp highcap` = lengths(st_intersects(nga, wp_highcap))) %>%
   mutate(`wp rural` = lengths(st_intersects(nga, wp_rural)))
@@ -271,6 +284,7 @@ nga_wp <- nga_wp %>%
   mutate(`pct_functional` = replace_na((`wp functional`/`total wp`),0)) %>%
   mutate(`pct_non-functional` = replace_na((`wp non-functional`/`total wp`),0)) %>%
   mutate(`pct_handpump` = replace_na((`wp handpump`/`total wp`),0)) %>%
+  mutate(`pct_mechpump` = replace_na((`wp mechpump`/`total wp`),0)) %>%
   mutate(`pct_lowcap` = replace_na((`wp lowcap`/`total wp`),0)) %>%
   mutate(`pct_highcap` = replace_na((`wp highcap`/`total wp`),0)) %>%
   mutate(`pct_rural` = replace_na((`wp rural`/`total wp`),0))
@@ -290,3 +304,131 @@ The code chunk below uses read_rds() to load rds file *wp_nga* for the analysis.
 nga_wp <- read_rds("data/wp_nga.rds")
 summary(nga_wp)
 ```
+
+## Exploratory Data Analysis (EDA)
+
+### EDA using statistical graphics
+
+The code chunk below plots multiple histograms to reveal the distribution of newly created variables.
+
+[`ggarange()`](https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html) of **ggpubr** package is used to group the histograms together.
+
+```{r eval=FALSE}
+functional <- ggplot(data=nga_wp, 
+             aes(x= `pct_functional`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+nonfunctional <- ggplot(data=nga_wp, 
+             aes(x= `pct_non-functional`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+handpump <- ggplot(data=nga_wp, 
+             aes(x= `pct_handpump`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+mechpump <- ggplot(data=nga_wp, 
+             aes(x= `pct_mechpump`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+lowcap <- ggplot(data=nga_wp, 
+             aes(x= `pct_lowcap`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+highcap <- ggplot(data=nga_wp, 
+             aes(x= `pct_highcap`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+rural <- ggplot(data=nga_wp, 
+             aes(x= `pct_rural`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="light blue")
+
+ggarrange(functional, nonfunctional, handpump, mechpump, lowcap, highcap, rural,
+          ncol = 3, 
+          nrow = 3)
+```
+
+![](images/paste-AC5290C2.png)
+
+#### Preparing a choropleth map
+
+The code chunk below uses [`qtm()`](https://search.r-project.org/CRAN/refmans/tmap/html/qtm.html) of **tmap** package to plot a choropleth map showing the distribution of percentage of functional water points of Nigeria ar LGA level.
+
+```{r eval=FALSE}
+qtm(nga_wp, "pct_handpump")
+```
+
+![](images/paste-547D1EC6.png)
+
+The code chunk below plots two choropleth maps, one for the total number of water points and one for the total number of water points with handpump.
+
+```{r eval=FALSE}
+TT_WATERPOINTS.map <- tm_shape(nga_wp) + 
+  tm_fill(col = "total wp",
+          n = 5,
+          style = "jenks", 
+          title = "Total water points") + 
+  tm_borders(alpha = 0.5) 
+
+HANDPUMP.map <- tm_shape(nga_wp) + 
+  tm_fill(col = "wp handpump",
+          n = 5,
+          style = "jenks",
+          title = "Number of handpump ") + 
+  tm_borders(alpha = 0.5) 
+
+tmap_arrange(TT_WATERPOINTS.map, HANDPUMP.map,
+             asp=NA, ncol=2)
+```
+
+![](images/paste-EF0905D7.png)
+
+The choropleth maps above show that regions with relatively more water points are having relatively more handpumps.
+
+The code chunk below plots the choropleth maps showing the dsitribution of total number of water points and percentage of handpump.
+
+```{r eval=FALSE}
+tm_shape(nga_wp) +
+    tm_polygons(c("total wp", "pct_handpump"),
+                style="jenks") +
+    tm_facets(sync = TRUE, ncol = 2) +
+  tm_legend(legend.position = c("right", "bottom"))+
+  tm_layout(outer.margins=0, asp=0)
+```
+
+![](images/paste-4B55D28E.png)
+
+Comparing the choropleth map of number of handpump and percentage of handpump, we can tell that hand pump is the major technology used in most regions, regardless of having more or less water points.
+
+## Correlation Analysis
+
+The code chunk below uses [`corrplot.mixed()`](https://cran.r-project.org/web/packages/corrplot/corrplot.pdf)of [**corrplot**](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) package to visualise and analyse the correlation of the input variables.
+
+```{r eval=FALSE}
+cluster_vars <- nga_wp %>%
+  st_set_geometry(NULL)
+cluster_vars.cor = cor(cluster_vars[,14:20])
+corrplot.mixed(cluster_vars.cor,
+         lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+![](images/paste-6001BC59.png)
+
+The correlation plot above shows that *pct_handpump* and *pct_lowcap* are highly correlated (coefficient between 0.7 and 0.9). This suggests that only one of them should be used in the cluster analysis instead of both. In further analysis, I will keep *pct_handpump.*

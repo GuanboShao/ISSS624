@@ -239,19 +239,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data Wrangling</a>
   <ul class="collapse">
   <li><a href="#recording-na-values-into-string" id="toc-recording-na-values-into-string" class="nav-link" data-scroll-target="#recording-na-values-into-string">Recording NA values into string</a></li>
-  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda">EDA</a></li>
+  <li><a href="#check-the-distribution-of-classes-in-selected-fields" id="toc-check-the-distribution-of-classes-in-selected-fields" class="nav-link" data-scroll-target="#check-the-distribution-of-classes-in-selected-fields">Check the distribution of classes in selected fields</a></li>
   </ul></li>
   <li><a href="#extracting-water-point-data" id="toc-extracting-water-point-data" class="nav-link" data-scroll-target="#extracting-water-point-data">Extracting Water Point Data</a>
   <ul class="collapse">
   <li><a href="#extracting-functional-water-points" id="toc-extracting-functional-water-points" class="nav-link" data-scroll-target="#extracting-functional-water-points">Extracting functional water points</a></li>
   <li><a href="#extracting-non-functional-water-points" id="toc-extracting-non-functional-water-points" class="nav-link" data-scroll-target="#extracting-non-functional-water-points">Extracting non-functional water points</a></li>
-  <li><a href="#extracting-water-points-with-hand-pump-technology" id="toc-extracting-water-points-with-hand-pump-technology" class="nav-link" data-scroll-target="#extracting-water-points-with-hand-pump-technology">Extracting water points with Hand Pump technology</a></li>
+  <li><a href="#extracting-water-points-with-hand-pump" id="toc-extracting-water-points-with-hand-pump" class="nav-link" data-scroll-target="#extracting-water-points-with-hand-pump">Extracting water points with Hand Pump</a></li>
+  <li><a href="#extracting-water-points-with-mechanized-pump" id="toc-extracting-water-points-with-mechanized-pump" class="nav-link" data-scroll-target="#extracting-water-points-with-mechanized-pump">Extracting water points with Mechanized Pump</a></li>
   <li><a href="#extracting-water-points-with-usage-capacity-1000" id="toc-extracting-water-points-with-usage-capacity-1000" class="nav-link" data-scroll-target="#extracting-water-points-with-usage-capacity-1000">Extracting water points with Usage Capacity &lt;1000</a></li>
   <li><a href="#extracting-water-points-with-usage-capacity-1000-1" id="toc-extracting-water-points-with-usage-capacity-1000-1" class="nav-link" data-scroll-target="#extracting-water-points-with-usage-capacity-1000-1">Extracting water points with Usage Capacity &gt;=1000</a></li>
   <li><a href="#extracting-water-points-in-rural-area" id="toc-extracting-water-points-in-rural-area" class="nav-link" data-scroll-target="#extracting-water-points-in-rural-area">Extracting water points in rural area</a></li>
   </ul></li>
   <li><a href="#performing-point-in-polygon-count" id="toc-performing-point-in-polygon-count" class="nav-link" data-scroll-target="#performing-point-in-polygon-count">Performing Point-in-Polygon Count</a></li>
   <li><a href="#saving-the-analytical-data-table" id="toc-saving-the-analytical-data-table" class="nav-link" data-scroll-target="#saving-the-analytical-data-table">Saving the Analytical Data Table</a></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a>
+  <ul class="collapse">
+  <li><a href="#eda-using-statistical-graphics" id="toc-eda-using-statistical-graphics" class="nav-link" data-scroll-target="#eda-using-statistical-graphics">EDA using statistical graphics</a></li>
+  </ul></li>
+  <li><a href="#correlation-analysis" id="toc-correlation-analysis" class="nav-link" data-scroll-target="#correlation-analysis">Correlation Analysis</a></li>
   </ul>
 </nav>
     </div>
@@ -282,8 +288,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Total number of nonfunctional water points</p></li>
 <li><p>Percentage of functional water points</p></li>
 <li><p>Percentage of non-functional water points</p></li>
-<li><p>Percentage of main water point technology (i.e.&nbsp;Hand Pump)</p></li>
-<li><p>Percentage of usage capacity (i.e.&nbsp;&lt; 1000, &gt;=1000)</p></li>
+<li><p>Percentage of Hand Pump water point</p></li>
+<li><p>Percentage of Mechanized Pump water point</p></li>
+<li><p>Percentage of usage capacity</p></li>
 <li><p>Percentage of rural water points</p></li>
 </ul>
 </section>
@@ -378,33 +385,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">water_te_2 =</span> <span class="fu">replace_na</span>(water_te_2, <span class="st">"Unknown"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="eda" class="level3">
-<h3 class="anchored" data-anchor-id="eda">EDA</h3>
+<section id="check-the-distribution-of-classes-in-selected-fields" class="level3">
+<h3 class="anchored" data-anchor-id="check-the-distribution-of-classes-in-selected-fields">Check the distribution of classes in selected fields</h3>
 <p>The code chunk below uses <a href="https://rdrr.io/cran/summarytools/man/freq.html"><code>freq()</code></a> of <strong>funModeling</strong> package to display the distribution of water points status <em>status_cle</em> field in <em>wp_nga</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_nga,</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'status_cle'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="../_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid"></p>
+<p><img src="images/paste-DA60799B.png" class="img-fluid"></p>
 <p>According to the distribution diagram of each status, the proportion of functional water points includes <em>Functional</em>, <em>Functional but not in use</em>, and <em>Functional but needs repair</em>, which is <strong>54.88%</strong> in total. The proportion of non-functional water points includes <em>Non-Functional</em>, <em>Non-Functional due to dry season</em>, <em>Abandoned/Decommissioned</em>, <em>Abandoned</em>, and <em>Non functional due to dry season</em> which is <strong>33.9%</strong> in total.</p>
 <p>The code chunk below uses <a href="https://rdrr.io/cran/summarytools/man/freq.html"><code>freq()</code></a> of <strong>funModeling</strong> package to display the distribution of water point technology <em>water_te_2</em> field in <em>wp_nga</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_nga,</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'water_te_2'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="../_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid"></p>
+<p><img src="images/paste-61AF1412.png" class="img-fluid"></p>
 <p>The code chunk below uses <a href="https://rdrr.io/cran/summarytools/man/freq.html"><code>freq()</code></a> of <strong>funModeling</strong> package to display the distribution of usage capacity <em>usage_cap</em> field in <em>wp_nga</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_nga,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'usage_cap'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="../_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid"></p>
+<p><img src="images/paste-BD549143.png" class="img-fluid"></p>
 <p>The code chunk below uses <a href="https://rdrr.io/cran/summarytools/man/freq.html"><code>freq()</code></a> of <strong>funModeling</strong> package to display the distribution of urban/rural water points <em>is_urban</em> field in <em>wp_nga</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">freq</span>(<span class="at">data =</span> wp_nga,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'is_urban'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><img src="../_site/Take-home_Ex2/Take-home_Ex2_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid"></p>
+<p><img src="images/paste-0AE8771C.png" class="img-fluid"></p>
 </section>
 </section>
 <section id="extracting-water-point-data" class="level2">
@@ -434,8 +441,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Non functional due to dry season"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="extracting-water-points-with-hand-pump-technology" class="level3">
-<h3 class="anchored" data-anchor-id="extracting-water-points-with-hand-pump-technology">Extracting water points with Hand Pump technology</h3>
+<section id="extracting-water-points-with-hand-pump" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-water-points-with-hand-pump">Extracting water points with Hand Pump</h3>
 <p>The code chunk below uses <code>filter()</code> to select Hand Pump water points from <em>wp_nga</em> and name as <em>wp_handpump</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>wp_handpump <span class="ot">&lt;-</span> wp_nga <span class="sc">%&gt;%</span></span>
@@ -443,27 +450,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">"Hand Pump"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="extracting-water-points-with-mechanized-pump" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-water-points-with-mechanized-pump">Extracting water points with Mechanized Pump</h3>
+<p>The code chunk below uses <code>filter()</code> to select Mechanized Pump water points from <em>wp_nga</em> and name as <em>wp_mechpump</em>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>wp_mechpump <span class="ot">&lt;-</span> wp_nga <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(water_te_2 <span class="sc">%in%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">"Mechanized Pump"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="extracting-water-points-with-usage-capacity-1000" class="level3">
 <h3 class="anchored" data-anchor-id="extracting-water-points-with-usage-capacity-1000">Extracting water points with Usage Capacity &lt;1000</h3>
 <p>The code chunk below uses <code>filter()</code> to select water points with usage capacity &lt; 1000 from <em>wp_nga</em> and name as <em>wp_lowcap</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>wp_lowcap <span class="ot">&lt;-</span> <span class="fu">filter</span>(wp_nga, usage_cap <span class="sc">!=</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>wp_lowcap <span class="ot">&lt;-</span> <span class="fu">filter</span>(wp_nga, usage_cap <span class="sc">!=</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="extracting-water-points-with-usage-capacity-1000-1" class="level3">
 <h3 class="anchored" data-anchor-id="extracting-water-points-with-usage-capacity-1000-1">Extracting water points with Usage Capacity &gt;=1000</h3>
 <p>The code chunk below uses <code>filter()</code> to select water points with usage capacity &gt;= 1000 from <em>wp_nga</em> and name as <em>wp_highcap</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>wp_highcap <span class="ot">&lt;-</span> <span class="fu">filter</span>(wp_nga, usage_cap <span class="sc">==</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>wp_highcap <span class="ot">&lt;-</span> <span class="fu">filter</span>(wp_nga, usage_cap <span class="sc">==</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="extracting-water-points-in-rural-area" class="level3">
 <h3 class="anchored" data-anchor-id="extracting-water-points-in-rural-area">Extracting water points in rural area</h3>
 <p>The code chunk below uses <code>filter()</code> to select Hand Pump water points from <em>wp_nga</em> and name as <em>wp_handpump</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>wp_rural <span class="ot">&lt;-</span> wp_nga <span class="sc">%&gt;%</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_urban <span class="sc">%in%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">"False"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>wp_rural <span class="ot">&lt;-</span> wp_nga <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(is_urban <span class="sc">%in%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">c</span>(<span class="st">"False"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -472,14 +488,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In this section, <a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html"><code>st_intersects()</code></a> of <strong>sf</strong> package to identify the water points located in each region of Nigeria, <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/length"><code>length()</code></a> of <strong>Base R</strong> is used to calculate the number of water points in each region.</p>
 <p><a href="https://dplyr.tidyverse.org/reference/mutate.html"><code>mutate()</code></a> of <strong>dplyr</strong> package is used to derive new variables namely <em>total wp</em>, <em>wp functional</em>, <em>wp non-functional</em>, <em>wp handpump, wp lowcap, wp highcap, wp rural</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> nga <span class="sc">%&gt;%</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">total wp</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_nga))) <span class="sc">%&gt;%</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_functional))) <span class="sc">%&gt;%</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_nonfunctional))) <span class="sc">%&gt;%</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp handpump</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_handpump))) <span class="sc">%&gt;%</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp lowcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_lowcap))) <span class="sc">%&gt;%</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp highcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_highcap))) <span class="sc">%&gt;%</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp rural</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_rural)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> nga <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">total wp</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_nga))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_functional))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_nonfunctional))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp handpump</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_handpump))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp mechpump</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_mechpump))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp lowcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_lowcap))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp highcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_highcap))) <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">wp rural</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">lengths</span>(<span class="fu">st_intersects</span>(nga, wp_rural)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="saving-the-analytical-data-table" class="level2">
@@ -487,23 +504,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The code chunk below uses <code>mutate()</code> to derive 2 fields namely <em>pct_functional</em>, <em>pct_non-functional</em>, <em>pct_handpump, pct_lowcap, pct_highcap, pct_rural</em> which are the percentage of functional water points, non-functional water points, hand pump water points, usage capacity &lt; 1000 water points, usage capacity &gt;= 1000 water points and rural area water points in each region.</p>
 <p><code>replace_na()</code> is used to recode all NaN values which are caused by 0 in <em>total wp</em> field into 0.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> nga_wp <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp functional</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_non-functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_handpump</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp handpump</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_lowcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp lowcap</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_highcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp highcap</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_rural</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp rural</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> nga_wp <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp functional</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_non-functional</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp non-functional</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_handpump</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp handpump</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_mechpump</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp mechpump</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_lowcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp lowcap</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_highcap</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp highcap</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">pct_rural</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">replace_na</span>((<span class="st">`</span><span class="at">wp rural</span><span class="st">`</span><span class="sc">/</span><span class="st">`</span><span class="at">total wp</span><span class="st">`</span>),<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The code chunk below uses <a href="https://readr.tidyverse.org/reference/read_rds.html"><code>write_rds()</code></a> of <strong>readr</strong> package to save the extracted sf data table nga_<em>wp</em> into rds data format file called <em>wp_nga</em> and is saved in <em>data</em> folder.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(nga_wp, <span class="st">"data/wp_nga.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_rds</span>(nga_wp, <span class="st">"data/wp_nga.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Upon completing the above sections, we achieve an rds data format file called <em>wp_nga</em> which has a file size of 2.1MB. This allows us to keep a small size data file and delete raw data files which occupy space of several gigabytes. In the following section, <em>wp_nga.rds</em> will be used for analysis. A RMarkdown code <a href="https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf"><code>{r eval=FALSE}</code></a> is used to skip evaluating previous code chunks and exclude their results so that the <em>wp_nga.rds</em> file will not be modified. If need to reproduce the previous sections, please change <code>{r eval=FALSE}</code> to <code>{r}</code> then proceed to run the code chunks.</p>
 <p>The code chunk below uses read_rds() to load rds file <em>wp_nga</em> for the analysis.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/wp_nga.rds"</span>)</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nga_wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nga_wp <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="st">"data/wp_nga.rds"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nga_wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  shapeName            Level             shapeID           shapeGroup       
  Length:774         Length:774         Length:774         Length:774        
@@ -519,29 +537,149 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
                                         Mean   :122.7   Mean   : 67.36  
                                         3rd Qu.:169.0   3rd Qu.: 88.00  
                                         Max.   :895.0   Max.   :754.00  
- wp non-functional  wp handpump       wp lowcap        wp highcap    
+ wp non-functional  wp handpump      wp mechpump       wp lowcap     
  Min.   :  0.0     Min.   :  0.00   Min.   :  0.00   Min.   :  0.00  
- 1st Qu.: 13.0     1st Qu.:  6.00   1st Qu.: 16.00   1st Qu.: 11.00  
- Median : 34.0     Median : 47.00   Median : 59.50   Median : 25.00  
- Mean   : 41.6     Mean   : 75.84   Mean   : 89.59   Mean   : 33.13  
- 3rd Qu.: 61.0     3rd Qu.:110.00   3rd Qu.:129.00   3rd Qu.: 46.00  
- Max.   :277.0     Max.   :761.00   Max.   :764.00   Max.   :247.00  
-    wp rural      pct_functional   pct_non-functional  pct_handpump   
- Min.   :  0.00   Min.   :0.0000   Min.   :0.0000     Min.   :0.0000  
- 1st Qu.: 23.00   1st Qu.:0.3311   1st Qu.:0.2105     1st Qu.:0.1621  
- Median : 64.00   Median :0.4741   Median :0.3534     Median :0.5079  
- Mean   : 97.45   Mean   :0.4983   Mean   :0.3592     Mean   :0.4864  
- 3rd Qu.:141.00   3rd Qu.:0.6712   3rd Qu.:0.5080     3rd Qu.:0.7778  
- Max.   :895.00   Max.   :1.0000   Max.   :1.0000     Max.   :1.0000  
-   pct_lowcap      pct_highcap       pct_rural     
- Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
- 1st Qu.:0.3990   1st Qu.:0.1225   1st Qu.:0.5727  
- Median :0.6690   Median :0.3137   Median :0.8646  
- Mean   :0.6078   Mean   :0.3754   Mean   :0.7271  
- 3rd Qu.:0.8718   3rd Qu.:0.5787   3rd Qu.:1.0000  
- Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  </code></pre>
+ 1st Qu.: 13.0     1st Qu.:  6.00   1st Qu.: 10.00   1st Qu.: 16.00  
+ Median : 34.0     Median : 47.00   Median : 24.00   Median : 59.50  
+ Mean   : 41.6     Mean   : 75.84   Mean   : 32.60   Mean   : 89.59  
+ 3rd Qu.: 61.0     3rd Qu.:110.00   3rd Qu.: 45.75   3rd Qu.:129.00  
+ Max.   :277.0     Max.   :761.00   Max.   :247.00   Max.   :764.00  
+   wp highcap        wp rural      pct_functional   pct_non-functional
+ Min.   :  0.00   Min.   :  0.00   Min.   :0.0000   Min.   :0.0000    
+ 1st Qu.: 11.00   1st Qu.: 23.00   1st Qu.:0.3311   1st Qu.:0.2105    
+ Median : 25.00   Median : 64.00   Median :0.4741   Median :0.3534    
+ Mean   : 33.13   Mean   : 97.45   Mean   :0.4983   Mean   :0.3592    
+ 3rd Qu.: 46.00   3rd Qu.:141.00   3rd Qu.:0.6712   3rd Qu.:0.5080    
+ Max.   :247.00   Max.   :895.00   Max.   :1.0000   Max.   :1.0000    
+  pct_handpump     pct_mechpump      pct_lowcap      pct_highcap    
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.1621   1st Qu.:0.1182   1st Qu.:0.3990   1st Qu.:0.1225  
+ Median :0.5079   Median :0.3120   Median :0.6690   Median :0.3137  
+ Mean   :0.4864   Mean   :0.3704   Mean   :0.6078   Mean   :0.3754  
+ 3rd Qu.:0.7778   3rd Qu.:0.5708   3rd Qu.:0.8718   3rd Qu.:0.5787  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+   pct_rural     
+ Min.   :0.0000  
+ 1st Qu.:0.5727  
+ Median :0.8646  
+ Mean   :0.7271  
+ 3rd Qu.:1.0000  
+ Max.   :1.0000  </code></pre>
 </div>
 </div>
+</section>
+<section id="exploratory-data-analysis-eda" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
+<section id="eda-using-statistical-graphics" class="level3">
+<h3 class="anchored" data-anchor-id="eda-using-statistical-graphics">EDA using statistical graphics</h3>
+<p>The code chunk below plots multiple histograms to reveal the distribution of newly created variables.</p>
+<p><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggarrange.html"><code>ggarange()</code></a> of <strong>ggpubr</strong> package is used to group the histograms together.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>functional <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_functional</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>nonfunctional <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_non-functional</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>handpump <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_handpump</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>mechpump <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_mechpump</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>lowcap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_lowcap</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>highcap <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_highcap</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>rural <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">pct_rural</span><span class="st">`</span>)) <span class="sc">+</span></span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"light blue"</span>)</span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(functional, nonfunctional, handpump, mechpump, lowcap, highcap, rural,</span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">3</span>, </span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/paste-AC5290C2.png" class="img-fluid"></p>
+<section id="preparing-a-choropleth-map" class="level4">
+<h4 class="anchored" data-anchor-id="preparing-a-choropleth-map">Preparing a choropleth map</h4>
+<p>The code chunk below uses <a href="https://search.r-project.org/CRAN/refmans/tmap/html/qtm.html"><code>qtm()</code></a> of <strong>tmap</strong> package to plot a choropleth map showing the distribution of percentage of functional water points of Nigeria ar LGA level.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qtm</span>(nga_wp, <span class="st">"pct_handpump"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/paste-547D1EC6.png" class="img-fluid"></p>
+<p>The code chunk below plots two choropleth maps, one for the total number of water points and one for the total number of water points with handpump.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>TT_WATERPOINTS.map <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(nga_wp) <span class="sc">+</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"total wp"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"jenks"</span>, </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">title =</span> <span class="st">"Total water points"</span>) <span class="sc">+</span> </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>HANDPUMP.map <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(nga_wp) <span class="sc">+</span> </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_fill</span>(<span class="at">col =</span> <span class="st">"wp handpump"</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">n =</span> <span class="dv">5</span>,</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">style =</span> <span class="st">"jenks"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">title =</span> <span class="st">"Number of handpump "</span>) <span class="sc">+</span> </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(TT_WATERPOINTS.map, HANDPUMP.map,</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp=</span><span class="cn">NA</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/paste-EF0905D7.png" class="img-fluid"></p>
+<p>The choropleth maps above show that regions with relatively more water points are having relatively more handpumps.</p>
+<p>The code chunk below plots the choropleth maps showing the dsitribution of total number of water points and percentage of handpump.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(nga_wp) <span class="sc">+</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_polygons</span>(<span class="fu">c</span>(<span class="st">"total wp"</span>, <span class="st">"pct_handpump"</span>),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">style=</span><span class="st">"jenks"</span>) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_facets</span>(<span class="at">sync =</span> <span class="cn">TRUE</span>, <span class="at">ncol =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_legend</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="st">"right"</span>, <span class="st">"bottom"</span>))<span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">outer.margins=</span><span class="dv">0</span>, <span class="at">asp=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/paste-4B55D28E.png" class="img-fluid"></p>
+<p>Comparing the choropleth map of number of handpump and percentage of handpump, we can tell that hand pump is the major technology used in most regions, regardless of having more or less water points.</p>
+</section>
+</section>
+</section>
+<section id="correlation-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-analysis">Correlation Analysis</h2>
+<p>The code chunk below uses <a href="https://cran.r-project.org/web/packages/corrplot/corrplot.pdf"><code>corrplot.mixed()</code></a>of <a href="https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html"><strong>corrplot</strong></a> package to visualise and analyse the correlation of the input variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cluster_vars <span class="ot">&lt;-</span> nga_wp <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_set_geometry</span>(<span class="cn">NULL</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>cluster_vars.cor <span class="ot">=</span> <span class="fu">cor</span>(cluster_vars[,<span class="dv">14</span><span class="sc">:</span><span class="dv">20</span>])</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot.mixed</span>(cluster_vars.cor,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower =</span> <span class="st">"ellipse"</span>, </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">upper =</span> <span class="st">"number"</span>,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">tl.pos =</span> <span class="st">"lt"</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">diag =</span> <span class="st">"l"</span>,</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">tl.col =</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/paste-6001BC59.png" class="img-fluid"></p>
+<p>The correlation plot above shows that <em>pct_handpump</em> and <em>pct_lowcap</em> are highly correlated (coefficient between 0.7 and 0.9). This suggests that only one of them should be used in the cluster analysis instead of both. In further analysis, I will keep <em>pct_handpump.</em></p>
 
 
 </section>
