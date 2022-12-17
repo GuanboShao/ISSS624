@@ -314,3 +314,51 @@ tertiary_TV
 ```{r}
 tmap_mode("plot")
 ```
+
+## Removing insignificant variables
+
+According to the generalized linear regression model and geographically weighted regression model results, *distance_to_primary_road* and *distance_to_secondary_road* are not significant. Therefore, these 2 variables are removed and conduct analysis again.
+
+```{r}
+bw.fixed2 <- bw.ggwr(status ~
+                      distance_to_tertiary_road +
+                      distance_to_city +
+                      distance_to_town +
+                      water_point_population +
+                      local_population_1km +
+                      is_urban +
+                      usage_capacity +
+                      water_source_clean,
+                    data = Osun_wp_sp,
+                    family = "binomial",
+                    approach = "AIC",
+                    kernel = "gaussian",
+                    adaptive = FALSE,
+                    longlat = FALSE)
+```
+
+```{r}
+bw.fixed2
+```
+
+```{r}
+gwlr.fixed2 <- ggwr.basic(status ~
+                      distance_to_tertiary_road +
+                      distance_to_city +
+                      distance_to_town +
+                      water_point_population +
+                      local_population_1km +
+                      is_urban +
+                      usage_capacity +
+                      water_source_clean,
+                    data = Osun_wp_sp,
+                    bw = 2599.672,
+                    family = "binomial",
+                    kernel = "gaussian",
+                    adaptive = FALSE,
+                    longlat = FALSE)
+```
+
+```{r}
+gwlr.fixed2
+```
