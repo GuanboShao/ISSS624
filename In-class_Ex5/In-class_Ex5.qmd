@@ -352,7 +352,7 @@ gwlr.fixed2 <- ggwr.basic(status ~
                       usage_capacity +
                       water_source_clean,
                     data = Osun_wp_sp,
-                    bw = 2599.672,
+                    bw = 2377.371,
                     family = "binomial",
                     kernel = "gaussian",
                     adaptive = FALSE,
