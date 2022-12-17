@@ -1,0 +1,299 @@
+---
+title: "In-class Exercise 5: Modeling the Spatial Variation of the Explanatory Factors of Water Points Status using Geographically Weighted Logistic Regression"
+editor: visual
+---
+
+## Overview
+
+In this in-class exercise, I learn how to use Geographically Weighted Logistic Regression to model the spatial variation of the explanatory factors of water points status.
+
+## Getting Started
+
+In this exercise, the following R packages will be used:
+
+-   [**sf**](https://r-spatial.github.io/sf/) for importing, managing, and processing geospatial data
+
+-   [**spdep**](https://cran.r-project.org/web/packages/spdep/spdep.pdf) for computing spatial weights, global and local spatial autocorrelation statistics
+
+-   [**tidyverse**](https://www.tidyverse.org/packages/) for importing, wrangling, and visualizing data
+
+    -   [**tidyr**](https://tidyr.tidyverse.org/) for manipulating data
+
+    -   [**dplyr**](https://dplyr.tidyverse.org/) for transforming data
+
+    -   [**ggplot2**](https://ggplot2.tidyverse.org/) for visualizing data
+
+-   [**ggpubr**](https://www.rdocumentation.org/packages/ggpubr/versions/0.1.1) for providing some easy-to-use functions for creating and customizing **ggplot2**
+
+-   [**tmap**](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html) for plotting cartographic quality choropleth map
+
+-   [**corrplot**](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) for providing a visual exploratory tool on correlation matrix that supports automatic variable reordering to help detect hidden patterns among variables
+
+-   [**GWmodel**](https://cran.r-project.org/web/packages/GWmodel/) for calibrating geographical weighted family of models
+
+-   [**funModeling**](https://cran.r-project.org/web/packages/funModeling/vignettes/funModeling_quickstart.html) for Exploratory Data Analysis (EDA)
+
+-   [**blorr**](https://cran.r-project.org/web/packages/blorr/index.html) for building and validate binary logistic regression models
+
+-   [**skimr**](https://www.rdocumentation.org/packages/skimr/versions/2.1.4/topics/skim) for providing summary statistics about variables in data frames, tibbles, data tables and vectors
+
+-   [**caret**](https://cran.r-project.org/web/packages/caret/index.html) for training and plotting classification and regression models
+
+```{r}
+pacman::p_load(sf, spdep, tidyverse, ggpubr, tmap, corrplot, GWmodel, funModeling, blorr, skimr, caret)
+```
+
+## Importing Data into R environment
+
+The code chunk below uses `read_rds()` of **Base R** to import rds file *Osun* and *Osun_wp_sf* into R.
+
+```{r}
+Osun <- read_rds("rds/Osun.rds")
+Osun_wp_sf <- read_rds("rds/Osun_wp_sf.rds")
+```
+
+The code chunk below uses `freq()` to check the distribution of *status* field.
+
+```{r}
+Osun_wp_sf %>%
+  freq(input = 'status')
+```
+
+```{r}
+tmap_mode("view")
+tm_shape(Osun) +
+  tm_polygons(alpha = 0.4) +
+ tm_shape(Osun_wp_sf) +
+  tm_dots(col = 'status',
+          alpha = 0.6) +
+  tm_view(set.zoom.limits = c(9,12))
+```
+
+```{r}
+tmap_mode("plot")
+```
+
+```{r}
+Osun_wp_sf %>%
+  skim()
+```
+
+## Exploratory Data Analysis (EDA)
+
+The code chunk below uses `filter_at()` to keep selected variables, remove NA values and `all_vars()` to change *usage_capacity* into numeric values.
+
+```{r}
+Osun_wp_sf_clean <- Osun_wp_sf %>%
+  filter_at(vars(status,
+                 distance_to_primary_road,
+                 distance_to_secondary_road,
+                 distance_to_tertiary_road,
+                 distance_to_city,
+                 distance_to_town,
+                 water_point_population,
+                 local_population_1km,
+                 usage_capacity,
+                 is_urban,
+                 water_source_clean),
+            all_vars(!is.na(.))) %>%
+  mutate(usage_capacity = as.factor(usage_capacity))
+```
+
+## Correlation Analysis
+
+The code chunk below selects the variables for analysis and saves into *Osun_wp*.
+
+```{r}
+Osun_wp <- Osun_wp_sf_clean %>%
+  select(c(7,35:39,42:43,46:47,57)) %>%
+  st_set_geometry(NULL)
+```
+
+The code chunk below visualize the strength of correlation between variables.
+
+```{r}
+cluster_vars.cor = cor(
+  Osun_wp[,2:7])
+corrplot.mixed(cluster_vars.cor,
+               lower = "ellipse",
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+## Building a Logistic Regression Model
+
+The code chunk below uses `glm()` to build a logistic regression model based on selected variables.
+
+```{r}
+model <- glm(status ~
+               distance_to_primary_road+
+               distance_to_secondary_road+
+               distance_to_city+
+               distance_to_town+
+               is_urban+
+               usage_capacity+
+               water_source_clean+
+               water_point_population+
+               local_population_1km,
+             data = Osun_wp_sf_clean,
+             family = binomial(link = 'logit'))
+```
+
+The code chunk below uses `blr_regress()` to show the result of model results.
+
+```{r}
+blr_regress(model)
+```
+
+The code chunk below uses `blr_confusion_matrix()` to create a confusion matrix of the above model.
+
+```{r}
+blr_confusion_matrix(model, cutoff = 0.5)
+```
+
+## Building a Geographically Weighted Regression
+
+### Converting from sf to sp data frame
+
+The code chunk below uses `as_Spatial()` to change *Osun_wp_sf_clean* data frame into spatial point object class.
+
+```{r}
+Osun_wp_sp <- Osun_wp_sf_clean %>%
+  select(c(status,
+           distance_to_primary_road,
+           distance_to_secondary_road,
+           distance_to_tertiary_road,
+           distance_to_city,
+           distance_to_town,
+           water_point_population,
+           local_population_1km,
+           usage_capacity,
+           is_urban,
+           water_source_clean)) %>%
+  as_Spatial()
+Osun_wp_sp
+```
+
+### Building fixed bandwidth GWR model
+
+The code chunk below uses `bw.ggwr()` to build a fixed bandwidth GWR model based on selected variables.
+
+```{r eval=FALSE}
+bw.fixed <- bw.ggwr(status ~
+                      distance_to_primary_road +
+                      distance_to_secondary_road +
+                      distance_to_tertiary_road +
+                      distance_to_city +
+                      distance_to_town +
+                      water_point_population +
+                      local_population_1km +
+                      is_urban +
+                      usage_capacity +
+                      water_source_clean,
+                    data = Osun_wp_sp,
+                    family = "binomial",
+                    approach = "AIC",
+                    kernel = "gaussian",
+                    adaptive = FALSE,
+                    longlat = FALSE)
+```
+
+The code chunk below shows the optimal fixed bandwidth.
+
+```{r eval=FALSE}
+bw.fixed
+```
+
+```{r}
+gwlr.fixed <- ggwr.basic(status ~
+                      distance_to_primary_road +
+                      distance_to_secondary_road +
+                      distance_to_tertiary_road +
+                      distance_to_city +
+                      distance_to_town +
+                      water_point_population +
+                      local_population_1km +
+                      is_urban +
+                      usage_capacity +
+                      water_source_clean,
+                    data = Osun_wp_sp,
+                    bw = 2599.672,
+                    family = "binomial",
+                    kernel = "gaussian",
+                    adaptive = FALSE,
+                    longlat = FALSE)
+```
+
+The code chunk below shows the model results and the AIC value indicates that the model improves.
+
+```{r}
+gwlr.fixed
+```
+
+## Model Assessment
+
+### Converting SDF into sf data frame
+
+To assess the performance of the gwlr, we suse the code chunk below convert *SDF* object into data frame.
+
+```{r}
+gwr.fixed <- as.data.frame(gwlr.fixed$SDF)
+```
+
+The code chunk below label *yhat* values \>= 0.5 into 1 and else 0. The result is saved into a field called *most*.
+
+```{r}
+gwr.fixed <- gwr.fixed %>%
+  mutate(most = ifelse(
+    gwr.fixed$yhat >= 0.5, T, F))
+```
+
+```{r}
+gwr.fixed$y <- as.factor(gwr.fixed$y)
+gwr.fixed$most <- as.factor(gwr.fixed$most)
+CM <- confusionMatrix(data = gwr.fixed$most,
+                      reference = gwr.fixed$y)
+CM
+```
+
+## Visualizing gwLR
+
+```{r}
+Osun_wp_sf_selected <- Osun_wp_sf_clean %>%
+  select(c(ADM2_EN, ADM2_PCODE, ADM1_EN, ADM1_PCODE, status))
+```
+
+```{r}
+gwr_sf.fixed <- cbind(Osun_wp_sf_selected, gwr.fixed)
+```
+
+### Visualizing coefficient estimates
+
+```{r}
+tmap_mode("view")
+prob_T <- tm_shape(Osun) +
+  tm_polygons(alpha = 0.1) +
+tm_shape(gwr_sf.fixed) +
+  tm_dots(col = "yhat",
+          border.col = "gray60",
+          border.lwd = 1) +
+  tm_view(set.zoom.limits = c(8,14))
+prob_T
+```
+
+```{r}
+tertiary_TV <- tm_shape(Osun) +
+  tm_polygons(alpha = 0.1) +
+tm_shape(gwr_sf.fixed) +
+  tm_dots(col = "distance_to_tertiary_road_TV",
+          border.col = "gray60",
+          border.lwd = 1) +
+  tm_view(set.zoom.limits = c(8,14))
+tertiary_TV
+```
+
+```{r}
+tmap_mode("plot")
+```
