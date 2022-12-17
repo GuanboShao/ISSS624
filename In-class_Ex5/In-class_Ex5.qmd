@@ -39,25 +39,38 @@ In this exercise, the following R packages will be used:
 
 -   [**caret**](https://cran.r-project.org/web/packages/caret/index.html) for training and plotting classification and regression models
 
+The code chunk below installs and launch the R packages into R environment.
+
 ```{r}
-pacman::p_load(sf, spdep, tidyverse, ggpubr, tmap, corrplot, GWmodel, funModeling, blorr, skimr, caret)
+pacman::p_load(sf, spdep, tidyverse, ggpubr, tmap, corrplot,
+               GWmodel, funModeling, blorr, skimr, caret)
 ```
 
-## Importing Data into R environment
+## Data Preparation
 
-The code chunk below uses `read_rds()` of **Base R** to import rds file *Osun* and *Osun_wp_sf* into R.
+### Importing data into R environment
+
+The code chunk below uses [`read_rds()`](https://www.rdocumentation.org/packages/readr/versions/1.1.1/topics/read_rds) of **Base R** to import rds file *Osun* and *Osun_wp_sf* into R.
 
 ```{r}
 Osun <- read_rds("rds/Osun.rds")
 Osun_wp_sf <- read_rds("rds/Osun_wp_sf.rds")
 ```
 
-The code chunk below uses `freq()` to check the distribution of *status* field.
+The code chunk below uses [`freq()`](https://rdrr.io/cran/summarytools/man/freq.html) of **funModeling** package to check the distribution of *status* field.
 
 ```{r}
 Osun_wp_sf %>%
   freq(input = 'status')
 ```
+
+### Drawing statistical point map
+
+The code chunk below uses `tmap_mode()` of **tmap** package to turn on the interactive mode.
+
+**tmap** package is used to reveal the geospatial distribution of *status*.
+
+`set.zoom.limits` argument of `tm_view()` sets the minimum and maximum zoom level to 9 and 12 respectively.
 
 ```{r}
 tmap_mode("view")
@@ -69,9 +82,13 @@ tm_shape(Osun) +
   tm_view(set.zoom.limits = c(9,12))
 ```
 
+The code chunk below changes R display to *plot* mode.
+
 ```{r}
 tmap_mode("plot")
 ```
+
+The code chunk below uses [`skim()`](https://search.r-project.org/CRAN/refmans/skimr/html/skim.html) of **skimr** package to provide a broad overview of a data frame, which dispatches a set of summary functions based on the types of columns.
 
 ```{r}
 Osun_wp_sf %>%
@@ -80,7 +97,7 @@ Osun_wp_sf %>%
 
 ## Exploratory Data Analysis (EDA)
 
-The code chunk below uses `filter_at()` to keep selected variables, remove NA values and `all_vars()` to change *usage_capacity* into numeric values.
+The code chunk below uses [`filter_at()`](https://dplyr.tidyverse.org/reference/filter_all.html) to keep selected variables, remove NA values and `all_vars()` to change *usage_capacity* into numeric values.
 
 ```{r}
 Osun_wp_sf_clean <- Osun_wp_sf %>%
@@ -109,7 +126,7 @@ Osun_wp <- Osun_wp_sf_clean %>%
   st_set_geometry(NULL)
 ```
 
-The code chunk below visualize the strength of correlation between variables.
+The code chunk below uses [**corrplot**](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html) package to plot a scatterplot matrix of the relationship between the independent variables.
 
 ```{r}
 cluster_vars.cor = cor(
@@ -180,7 +197,7 @@ Osun_wp_sp
 
 The code chunk below uses `bw.ggwr()` to build a fixed bandwidth GWR model based on selected variables.
 
-```{r eval=FALSE}
+```{r}
 bw.fixed <- bw.ggwr(status ~
                       distance_to_primary_road +
                       distance_to_secondary_road +
@@ -202,7 +219,7 @@ bw.fixed <- bw.ggwr(status ~
 
 The code chunk below shows the optimal fixed bandwidth.
 
-```{r eval=FALSE}
+```{r}
 bw.fixed
 ```
 
